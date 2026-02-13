@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Beautrì Srl</title>
+    <!-- Google Fonts: Montserrat -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+      /* Reset & Base Styles */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: 'Montserrat', sans-serif;
+        background-color: #FDFDFD; /* Bianco Seta */
+        color: #292524; /* Stone 800 */
+        height: 100vh;
+        width: 100vw;
+        overflow: hidden; /* Prevent scrolling */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+      }
+
+      /* Layout Container */
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        width: 100%;
+        max-width: 28rem; /* Equivalent to max-w-md */
+      }
+
+      /* Logo Styling */
+      .logo-container {
+        margin-bottom: 3rem; /* Equivalent to mb-12 */
+      }
+
+      .logo-img {
+        width: 200px;
+        height: auto;
+        object-fit: contain;
+        opacity: 0.9;
+        display: block;
+      }
+
+      @media (min-width: 768px) {
+        .logo-container {
+          margin-bottom: 4rem; /* Equivalent to md:mb-16 */
+        }
+        .logo-img {
+          width: 250px;
+        }
+      }
+
+      /* Text Styling */
+      .welcome-text {
+        font-size: 1.125rem; /* Equivalent to text-lg */
+        font-weight: 300; /* Equivalent to font-light */
+        letter-spacing: 0.15em;
+        line-height: 1.625;
+        text-transform: uppercase;
+        opacity: 0.8;
+      }
+
+      @media (min-width: 640px) {
+        .welcome-text {
+          font-size: 1.25rem; /* Equivalent to text-xl */
+        }
+      }
+
+      /* Footer Placeholder */
+      .footer-decoration {
+        position: absolute;
+        bottom: 2rem;
+        opacity: 0.2;
+      }
+    </style>
+  </head>
+  <body>
+
+    <div class="container">
+      
+      <!-- LOGO SECTION -->
+      <div class="logo-container">
+        <img 
+          src="https://i.ibb.co/9BMV7P6/1000px.png" 
+          alt="Beautrì Srl Logo" 
+          class="logo-img"
+        />
+      </div>
+
+      <!-- MAIN CONTENT -->
+      <p class="welcome-text">
+        Grazie per aver acquistato i nostri prodotti.
+      </p>
+
+      <!-- 
+        ========================================
+        HIDDEN PLACEHOLDERS FOR FUTURE DEVELOPMENT
+        ========================================
+      -->
+
+      <!-- 
+        PLACEHOLDER: BUTTONS SECTION
+        Area riservata per l'inserimento dei 3 tasti di navigazione/azione.
+        Esempio struttura futura:
+        <div style="margin-top: 3rem; display: flex; flex-direction: column; gap: 1rem; width: 100%; max-width: 20rem;">
+          <button style="padding: 1rem; border: 1px solid #e5e7eb; background: white; font-family: inherit;">Tasto 1</button>
+          <button style="padding: 1rem; border: 1px solid #e5e7eb; background: white; font-family: inherit;">Tasto 2</button>
+          <button style="padding: 1rem; border: 1px solid #e5e7eb; background: white; font-family: inherit;">Tasto 3</button>
+        </div>
+      -->
+
+      <!-- 
+        PLACEHOLDER: VIDEO SECTION
+        Area riservata per l'inserimento dei video di Daniela.
+        Esempio struttura futura:
+        <div style="margin-top: 2rem; width: 100%; aspect-ratio: 16/9; border-radius: 0.5rem; overflow: hidden; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);">
+          <video src="URL_VIDEO" controls style="width: 100%; height: 100%; object-fit: cover;"></video>
+        </div>
+      -->
+
+    </div>
+
+    <!-- Footer Decoration (Optional) -->
+    <div class="footer-decoration">
+      <!-- Potenziale elemento decorativo o footer minimale se necessario in futuro -->
+    </div>
+
+  </body>
+</html>
