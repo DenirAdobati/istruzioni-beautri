@@ -127,9 +127,10 @@
         display: none;
         flex-direction: column;
         align-items: center;
-        gap: 1.5rem;
+ 
         width: 100%;
-        max-width: 380px;
+        max-width: 400px;
+        padding-top: 0.5rem;
       }
  
       #video-view.active {
@@ -137,7 +138,10 @@
       }
  
       .back-btn {
-        align-self: flex-start;
+        position: fixed;
+        top: 1.2rem;
+        left: 1.2rem;
+        z-index: 100;
         display: flex;
         align-items: center;
         gap: 0.4rem;
@@ -158,14 +162,6 @@
       .back-btn:hover { opacity: 1; }
       .back-btn svg { width: 14px; height: 14px; }
  
-      .video-product-title {
-        font-size: 0.7rem;
-        font-weight: 800;
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-        color: #1A1A1A;
-        opacity: 0.5;
-        text-align: center;
       }
  
       .video-wrapper {
@@ -250,7 +246,6 @@
         </svg>
         Prodotti
       </button>
-      <p class="video-product-title" id="video-title"></p>
       <div class="video-wrapper">
         <iframe id="video-iframe" src="" title="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
@@ -258,7 +253,6 @@
  
     <script>
       function openVideo(name, ytid) {
-        document.getElementById('video-title').textContent = name;
         document.getElementById('video-iframe').src =
           'https://www.youtube.com/embed/' + ytid + '?autoplay=1&rel=0&modestbranding=1';
         document.getElementById('grid-view').style.display = 'none';
