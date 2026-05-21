@@ -23,15 +23,21 @@
         padding: 2rem 1.2rem 5rem;
       }
  
+      /* ══════════════════════════════
+         GRIGLIA PRODOTTI
+      ══════════════════════════════ */
+      #grid-view {
+        width: 100%;
+        max-width: 400px;
+      }
+ 
       .product-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 1rem;
         width: 100%;
-        max-width: 400px;
       }
  
-      /* ── Card ── */
       .product-card {
         display: flex;
         flex-direction: column;
@@ -56,7 +62,6 @@
         box-shadow: none;
       }
  
-      /* ── Image: sfondo trasparente — bottiglia galleggia sul nero ── */
       .card-img-wrap {
         width: 100%;
         aspect-ratio: 3 / 4;
@@ -73,14 +78,13 @@
         object-fit: contain;
         display: block;
         transition: transform 0.35s ease;
-        filter: drop-shadow(0 12px 28px rgba(0,0,0,0.5));
+        filter: drop-shadow(0 8px 20px rgba(0,0,0,0.15));
       }
  
       .product-card:hover .card-img-wrap img {
         transform: scale(1.07) translateY(-5px);
       }
  
-      /* ── Divider oro ── */
       .card-divider {
         height: 1px;
         background: linear-gradient(90deg, transparent, #C9A227 30%, #C9A227 70%, transparent);
@@ -88,7 +92,6 @@
         opacity: 0.6;
       }
  
-      /* ── Nome prodotto ── */
       .card-name {
         padding: 0.65rem 1rem 0.85rem;
         display: flex;
@@ -114,91 +117,162 @@
         line-height: 1;
       }
  
-      @media (max-width: 360px) {
-        .product-grid { gap: 0.75rem; }
+      @media (max-width: 360px) { .product-grid { gap: 0.75rem; } }
+      @media (min-width: 500px) { #grid-view { max-width: 440px; } .product-grid { gap: 1.2rem; } }
+ 
+      /* ══════════════════════════════
+         VISTA VIDEO
+      ══════════════════════════════ */
+      #video-view {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+        width: 100%;
+        max-width: 380px;
       }
-      @media (min-width: 500px) {
-        .product-grid { max-width: 440px; gap: 1.2rem; }
+ 
+      #video-view.active {
+        display: flex;
+      }
+ 
+      .back-btn {
+        align-self: flex-start;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #1A1A1A;
+        opacity: 0.45;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        font-family: 'Outfit', sans-serif;
+        transition: opacity 0.2s;
+      }
+ 
+      .back-btn:hover { opacity: 1; }
+      .back-btn svg { width: 14px; height: 14px; }
+ 
+      .video-product-title {
+        font-size: 0.7rem;
+        font-weight: 800;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: #1A1A1A;
+        opacity: 0.5;
+        text-align: center;
+      }
+ 
+      .video-wrapper {
+        width: 100%;
+        aspect-ratio: 9 / 16;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 16px 48px rgba(26,26,26,0.18);
+        background: #1A1A1A;
+      }
+ 
+      .video-wrapper iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+        display: block;
       }
     </style>
   </head>
   <body>
  
-    <div class="product-grid">
+    <!-- ── GRIGLIA ── -->
+    <div id="grid-view">
+      <div class="product-grid">
  
-      <!-- Shampoo -->
-      <a class="product-card" href="shampoo.html">
-        <div class="card-img-wrap">
-          <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Shampoo.png" alt="Shampoo" loading="eager" />
+        <div class="product-card" onclick="openVideo('Shampoo','CuMIowDFg5w')">
+          <div class="card-img-wrap">
+            <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Shampoo.png" alt="Shampoo" loading="eager" />
+          </div>
+          <div class="card-divider"></div>
+          <div class="card-name"><div class="card-name-dot"></div><span class="card-name-text">Shampoo</span></div>
         </div>
-        <div class="card-divider"></div>
-        <div class="card-name">
-          <div class="card-name-dot"></div>
-          <span class="card-name-text">Shampoo</span>
-        </div>
-      </a>
  
-      <!-- Lozione -->
-      <a class="product-card" href="lozione.html">
-        <div class="card-img-wrap">
-          <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Lozione.png" alt="Lozione" loading="eager" />
+        <div class="product-card" onclick="openVideo('Lozione','1b4h6CX64eY')">
+          <div class="card-img-wrap">
+            <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Lozione.png" alt="Lozione" loading="eager" />
+          </div>
+          <div class="card-divider"></div>
+          <div class="card-name"><div class="card-name-dot"></div><span class="card-name-text">Lozione</span></div>
         </div>
-        <div class="card-divider"></div>
-        <div class="card-name">
-          <div class="card-name-dot"></div>
-          <span class="card-name-text">Lozione</span>
-        </div>
-      </a>
  
-      <!-- Conditioner -->
-      <a class="product-card" href="conditioner.html">
-        <div class="card-img-wrap">
-          <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Conditioner.png" alt="Conditioner" loading="eager" />
+        <div class="product-card" onclick="openVideo('Conditioner','S7pz1fwtHiQ')">
+          <div class="card-img-wrap">
+            <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Conditioner.png" alt="Conditioner" loading="eager" />
+          </div>
+          <div class="card-divider"></div>
+          <div class="card-name"><div class="card-name-dot"></div><span class="card-name-text">Conditioner</span></div>
         </div>
-        <div class="card-divider"></div>
-        <div class="card-name">
-          <div class="card-name-dot"></div>
-          <span class="card-name-text">Conditioner</span>
-        </div>
-      </a>
  
-      <!-- Emulsione Lenitiva -->
-      <a class="product-card" href="emulsione-lenitiva.html">
-        <div class="card-img-wrap">
-          <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Emulsione%20LENITIVA.png" alt="Emulsione Lenitiva" loading="eager" />
+        <div class="product-card" onclick="openVideo('Emulsione Lenitiva','Fs5UVQApcn4')">
+          <div class="card-img-wrap">
+            <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Emulsione%20LENITIVA.png" alt="Emulsione Lenitiva" loading="eager" />
+          </div>
+          <div class="card-divider"></div>
+          <div class="card-name"><div class="card-name-dot"></div><span class="card-name-text">Emulsione Lenitiva</span></div>
         </div>
-        <div class="card-divider"></div>
-        <div class="card-name">
-          <div class="card-name-dot"></div>
-          <span class="card-name-text">Emulsione Lenitiva</span>
-        </div>
-      </a>
  
-      <!-- Emulsione Avvolgente -->
-      <a class="product-card" href="emulsione-avvolgente.html">
-        <div class="card-img-wrap">
-          <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Emulsione%20AVVOLGENTE.png" alt="Emulsione Avvolgente" loading="eager" />
+        <div class="product-card" onclick="openVideo('Emulsione Avvolgente','O8fJ_afMtsg')">
+          <div class="card-img-wrap">
+            <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Emulsione%20AVVOLGENTE.png" alt="Emulsione Avvolgente" loading="eager" />
+          </div>
+          <div class="card-divider"></div>
+          <div class="card-name"><div class="card-name-dot"></div><span class="card-name-text">Emulsione Avvolgente</span></div>
         </div>
-        <div class="card-divider"></div>
-        <div class="card-name">
-          <div class="card-name-dot"></div>
-          <span class="card-name-text">Emulsione Avvolgente</span>
-        </div>
-      </a>
  
-      <!-- Maschera -->
-      <a class="product-card" href="maschera.html">
-        <div class="card-img-wrap">
-          <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Maschera.png" alt="Maschera" loading="eager" />
+        <div class="product-card" onclick="openVideo('Maschera','CpbqIZhjxu0')">
+          <div class="card-img-wrap">
+            <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Maschera.png" alt="Maschera" loading="eager" />
+          </div>
+          <div class="card-divider"></div>
+          <div class="card-name"><div class="card-name-dot"></div><span class="card-name-text">Maschera</span></div>
         </div>
-        <div class="card-divider"></div>
-        <div class="card-name">
-          <div class="card-name-dot"></div>
-          <span class="card-name-text">Maschera</span>
-        </div>
-      </a>
  
+      </div>
     </div>
+ 
+    <!-- ── VIDEO ── -->
+    <div id="video-view">
+      <button class="back-btn" onclick="closeVideo()">
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9,2 4,7 9,12"/>
+        </svg>
+        Prodotti
+      </button>
+      <p class="video-product-title" id="video-title"></p>
+      <div class="video-wrapper">
+        <iframe id="video-iframe" src="" title="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </div>
+ 
+    <script>
+      function openVideo(name, ytid) {
+        document.getElementById('video-title').textContent = name;
+        document.getElementById('video-iframe').src =
+          'https://www.youtube.com/embed/' + ytid + '?autoplay=1&rel=0&modestbranding=1';
+        document.getElementById('grid-view').style.display = 'none';
+        document.getElementById('video-view').classList.add('active');
+        window.scrollTo(0, 0);
+      }
+ 
+      function closeVideo() {
+        document.getElementById('video-iframe').src = '';
+        document.getElementById('video-view').classList.remove('active');
+        document.getElementById('grid-view').style.display = 'block';
+        window.scrollTo(0, 0);
+      }
+    </script>
  
   </body>
 </html>
@@ -217,7 +291,7 @@
     gap: 0.6rem;
   }
   .wa-bubble {
-    background: #FFFFFF;
+    background: #1A1A1A;
     color: #FFFFFF;
     font-family: 'Outfit', sans-serif;
     font-size: 0.65rem;
