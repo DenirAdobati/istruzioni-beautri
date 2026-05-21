@@ -8,58 +8,83 @@
     <link rel="apple-touch-icon" href="https://beautri.it/wp-content/uploads/2020/02/cropped-favicon_beautri-270x270.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+ 
     <style>
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
  
       body {
-        font-family: 'Montserrat', sans-serif;
-        background-color: #FDFDFD;
-        color: #292524;
+        font-family: 'Outfit', sans-serif;
+        background-color: #E8E4DA;
+        color: #1A1A1A;
         min-height: 100vh;
-        width: 100vw;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 2rem 1.5rem;
+        padding: 2.5rem 1.25rem 5rem;
+      }
+ 
+      /* ── Header ── */
+      .header {
+        text-align: center;
+        margin-bottom: 2.2rem;
+      }
+ 
+      .header-title {
+        font-size: 1.6rem;
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #1A1A1A;
+        line-height: 1;
+      }
+ 
+      .header-sub {
+        margin-top: 0.45rem;
+        font-size: 0.6rem;
+        font-weight: 400;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: #1A1A1A;
+        opacity: 0.45;
+      }
+ 
+      .header-line {
+        width: 32px;
+        height: 2px;
+        background: #C9A227;
+        margin: 0.75rem auto 0;
+        border-radius: 2px;
       }
  
       /* ── Grid ── */
       .product-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 1rem;
+        gap: 0.85rem;
         width: 100%;
-        max-width: 420px;
+        max-width: 400px;
       }
  
       /* ── Card ── */
       .product-card {
-        display: block;
+        display: flex;
+        flex-direction: column;
         text-decoration: none;
-        background: #FFFFFF;
-        border: 0.5px solid rgba(41,37,36,0.12);
-        border-radius: 16px;
+        background: #F5F2EC;
+        border-radius: 20px;
         overflow: hidden;
         position: relative;
         cursor: pointer;
-        aspect-ratio: 1 / 1.15;
-        transition: transform 0.22s cubic-bezier(0.34,1.3,0.64,1),
-                    box-shadow 0.22s ease,
-                    border-color 0.2s ease;
         -webkit-tap-highlight-color: transparent;
+        transition: transform 0.2s cubic-bezier(0.34,1.3,0.64,1),
+                    box-shadow 0.2s ease;
       }
  
       .product-card:hover {
-        transform: translateY(-3px) scale(1.015);
-        box-shadow: 0 8px 28px rgba(41,37,36,0.1);
-        border-color: rgba(201,162,39,0.4);
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 16px 40px rgba(26,26,26,0.13);
       }
  
       .product-card:active {
@@ -67,58 +92,99 @@
         box-shadow: none;
       }
  
-      .product-card img {
+      /* image area */
+      .card-img-wrap {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 14%;
+        background: #F5F2EC;
+        position: relative;
+        overflow: hidden;
+      }
+ 
+      .card-img-wrap img {
         width: 100%;
         height: 100%;
         object-fit: contain;
-        object-position: center;
         display: block;
-        padding: 12%;
-        transition: transform 0.3s ease;
+        transition: transform 0.35s ease;
       }
  
-      .product-card:hover img {
-        transform: scale(1.04);
+      .product-card:hover .card-img-wrap img {
+        transform: scale(1.07);
       }
  
-      /* gold accent bottom */
-      .product-card::after {
+      /* gold shimmer on hover */
+      .card-img-wrap::after {
         content: '';
         position: absolute;
-        bottom: 0;
-        left: 12%;
-        width: 76%;
-        height: 2px;
-        background: #C9A227;
-        border-radius: 2px;
+        inset: 0;
+        background: radial-gradient(circle at 60% 30%, rgba(201,162,39,0.10) 0%, transparent 70%);
         opacity: 0;
-        transition: opacity 0.25s ease;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
       }
  
-      .product-card:hover::after {
+      .product-card:hover .card-img-wrap::after {
         opacity: 1;
       }
  
-      /* play badge */
+      /* name area */
+      .card-name {
+        padding: 0 1rem 0.9rem;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+ 
+      .card-name-line {
+        width: 18px;
+        height: 1.5px;
+        background: #C9A227;
+        border-radius: 2px;
+        margin-bottom: 4px;
+      }
+ 
+      .card-name-text {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #1A1A1A;
+        line-height: 1.3;
+      }
+ 
+      .card-name-sub {
+        font-size: 0.56rem;
+        font-weight: 400;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(26,26,26,0.4);
+      }
+ 
+      /* play icon bottom-right */
       .play-badge {
         position: absolute;
-        bottom: 10px;
-        right: 10px;
-        width: 28px;
-        height: 28px;
+        bottom: 0.7rem;
+        right: 0.7rem;
+        width: 26px;
+        height: 26px;
         border-radius: 50%;
-        background: rgba(41,37,36,0.65);
+        background: #1A1A1A;
         display: flex;
         align-items: center;
         justify-content: center;
         opacity: 0;
-        transition: opacity 0.22s ease;
+        transition: opacity 0.2s ease;
       }
  
       .play-badge svg {
-        width: 10px;
-        height: 10px;
-        fill: #FDFDFD;
+        width: 9px;
+        height: 9px;
+        fill: #F5F2EC;
         margin-left: 2px;
       }
  
@@ -126,52 +192,104 @@
         opacity: 1;
       }
  
-      @media (max-width: 380px) {
-        .product-grid { gap: 0.75rem; }
+      /* ── Responsive ── */
+      @media (max-width: 360px) {
+        .product-grid { gap: 0.65rem; }
+        .card-name { padding: 0 0.75rem 0.75rem; }
       }
  
-      @media (min-width: 540px) {
-        .product-grid { max-width: 480px; gap: 1.25rem; }
+      @media (min-width: 480px) {
+        .product-grid { max-width: 440px; gap: 1rem; }
       }
     </style>
   </head>
   <body>
  
+    <!-- Header -->
+    <div class="header">
+      <p class="header-title">Beautrì</p>
+      <p class="header-sub">I tuoi prodotti</p>
+      <div class="header-line"></div>
+    </div>
+ 
+    <!-- Grid -->
     <div class="product-grid">
  
       <!-- 1 · Shampoo -->
       <a class="product-card" href="shampoo.html" aria-label="Shampoo">
-        <img src="https://raw.githubusercontent.com/DenirAdobati/listino-beautri-/main/Shampoo.png" alt="Beautrì Shampoo" loading="eager" />
+        <div class="card-img-wrap">
+          <img src="https://raw.githubusercontent.com/DenirAdobati/listino-beautri-/main/Shampoo.png" alt="Shampoo Beautrì" loading="eager" />
+        </div>
+        <div class="card-name">
+          <div class="card-name-line"></div>
+          <span class="card-name-text">Shampoo</span>
+          <span class="card-name-sub">Guarda il video</span>
+        </div>
         <div class="play-badge" aria-hidden="true"><svg viewBox="0 0 10 10"><polygon points="1,0 10,5 1,10"/></svg></div>
       </a>
  
       <!-- 2 · Lozione -->
       <a class="product-card" href="lozione.html" aria-label="Lozione">
-        <img src="https://raw.githubusercontent.com/DenirAdobati/listino-beautri-/main/Lozione.png" alt="Beautrì Lozione" loading="eager" />
+        <div class="card-img-wrap">
+          <img src="https://raw.githubusercontent.com/DenirAdobati/listino-beautri-/main/Lozione.png" alt="Lozione Beautrì" loading="eager" />
+        </div>
+        <div class="card-name">
+          <div class="card-name-line"></div>
+          <span class="card-name-text">Lozione</span>
+          <span class="card-name-sub">Guarda il video</span>
+        </div>
         <div class="play-badge" aria-hidden="true"><svg viewBox="0 0 10 10"><polygon points="1,0 10,5 1,10"/></svg></div>
       </a>
  
       <!-- 3 · Conditioner -->
       <a class="product-card" href="conditioner.html" aria-label="Conditioner">
-        <img src="https://raw.githubusercontent.com/DenirAdobati/listino-beautri-/main/Conditioner.png" alt="Beautrì Conditioner" loading="eager" />
+        <div class="card-img-wrap">
+          <img src="https://raw.githubusercontent.com/DenirAdobati/listino-beautri-/main/Conditioner.png" alt="Conditioner Beautrì" loading="eager" />
+        </div>
+        <div class="card-name">
+          <div class="card-name-line"></div>
+          <span class="card-name-text">Conditioner</span>
+          <span class="card-name-sub">Guarda il video</span>
+        </div>
         <div class="play-badge" aria-hidden="true"><svg viewBox="0 0 10 10"><polygon points="1,0 10,5 1,10"/></svg></div>
       </a>
  
       <!-- 4 · Emulsione Lenitiva -->
       <a class="product-card" href="emulsione-lenitiva.html" aria-label="Emulsione Lenitiva">
-        <img src="https://raw.githubusercontent.com/DenirAdobati/listino-beautri-/main/Emulsione%20lenitiva.png" alt="Beautrì Emulsione Lenitiva" loading="eager" />
+        <div class="card-img-wrap">
+          <img src="https://raw.githubusercontent.com/DenirAdobati/listino-beautri-/main/Emulsione%20lenitiva.png" alt="Emulsione Lenitiva Beautrì" loading="eager" />
+        </div>
+        <div class="card-name">
+          <div class="card-name-line"></div>
+          <span class="card-name-text">Emulsione Lenitiva</span>
+          <span class="card-name-sub">Guarda il video</span>
+        </div>
         <div class="play-badge" aria-hidden="true"><svg viewBox="0 0 10 10"><polygon points="1,0 10,5 1,10"/></svg></div>
       </a>
  
       <!-- 5 · Emulsione Avvolgente -->
       <a class="product-card" href="emulsione-avvolgente.html" aria-label="Emulsione Avvolgente">
-        <img src="https://raw.githubusercontent.com/DenirAdobati/listino-beautri-/main/Emulsione%20avvolgente.png" alt="Beautrì Emulsione Avvolgente" loading="eager" />
+        <div class="card-img-wrap">
+          <img src="https://raw.githubusercontent.com/DenirAdobati/listino-beautri-/main/Emulsione%20avvolgente.png" alt="Emulsione Avvolgente Beautrì" loading="eager" />
+        </div>
+        <div class="card-name">
+          <div class="card-name-line"></div>
+          <span class="card-name-text">Emulsione Avvolgente</span>
+          <span class="card-name-sub">Guarda il video</span>
+        </div>
         <div class="play-badge" aria-hidden="true"><svg viewBox="0 0 10 10"><polygon points="1,0 10,5 1,10"/></svg></div>
       </a>
  
       <!-- 6 · Maschera -->
       <a class="product-card" href="maschera.html" aria-label="Maschera">
-        <img src="https://raw.githubusercontent.com/DenirAdobati/listino-beautri-/main/Masschera.png" alt="Beautrì Maschera" loading="eager" />
+        <div class="card-img-wrap">
+          <img src="https://raw.githubusercontent.com/DenirAdobati/listino-beautri-/main/Masschera.png" alt="Maschera Beautrì" loading="eager" />
+        </div>
+        <div class="card-name">
+          <div class="card-name-line"></div>
+          <span class="card-name-text">Maschera</span>
+          <span class="card-name-sub">Guarda il video</span>
+        </div>
         <div class="play-badge" aria-hidden="true"><svg viewBox="0 0 10 10"><polygon points="1,0 10,5 1,10"/></svg></div>
       </a>
  
@@ -197,10 +315,10 @@
   .wa-bubble {
     background: #1A1A1A;
     color: #FFFFFF;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.7rem;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.65rem;
     font-weight: 600;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     padding: 0.5rem 0.9rem;
     border-radius: 2rem;
@@ -217,8 +335,8 @@
  
   .wa-link {
     display: block;
-    width: 60px;
-    height: 60px;
+    width: 58px;
+    height: 58px;
     text-decoration: none;
     opacity: 0;
     animation: icon-in 0.45s cubic-bezier(0.34,1.56,0.64,1) 0.5s forwards,
@@ -238,35 +356,15 @@
     50%       { filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3)) drop-shadow(0 0 10px rgba(37,211,102,0.5)); }
   }
  
-  .wa-link:hover {
-    transform: scale(1.1);
-  }
- 
-  .wa-link:active {
-    transform: scale(0.95);
-  }
- 
-  .wa-link img {
-    width: 60px;
-    height: 60px;
-    object-fit: contain;
-    display: block;
-  }
+  .wa-link:hover { transform: scale(1.1); }
+  .wa-link:active { transform: scale(0.95); }
+  .wa-link img { width: 58px; height: 58px; object-fit: contain; display: block; }
 </style>
  
 <div class="wa-float">
   <div class="wa-bubble">Hai bisogno di aiuto con il tuo prodotto?</div>
-  <a
-    class="wa-link"
-    href="https://wa.me/393313348233"
-    target="_blank"
-    rel="noopener noreferrer"
-    aria-label="Contattaci su WhatsApp"
-  >
-    <img
-      src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
-      alt="WhatsApp"
-    />
+  <a class="wa-link" href="https://wa.me/393313348233" target="_blank" rel="noopener noreferrer" aria-label="Contattaci su WhatsApp">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
   </a>
 </div>
  
