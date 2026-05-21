@@ -8,7 +8,7 @@
     <link rel="apple-touch-icon" href="https://beautri.it/wp-content/uploads/2020/02/cropped-favicon_beautri-270x270.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&display=swap" rel="stylesheet">
  
     <style>
       * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -16,16 +16,13 @@
       body {
         font-family: 'Outfit', sans-serif;
         background-color: #E8E4DA;
-        color: #1A1A1A;
         min-height: 100vh;
         display: flex;
-        flex-direction: column;
         align-items: center;
         justify-content: center;
         padding: 2rem 1.1rem 5rem;
       }
  
-      /* ── Grid ── */
       .product-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -34,73 +31,62 @@
         max-width: 420px;
       }
  
-      /* ── Card ── */
+      /* ── Card: un unico blocco di colore, nessun box interno ── */
       .product-card {
         display: flex;
         flex-direction: column;
         text-decoration: none;
         border-radius: 22px;
         overflow: hidden;
-        position: relative;
         cursor: pointer;
         -webkit-tap-highlight-color: transparent;
+        background: #6B3319;
         transition: transform 0.22s cubic-bezier(0.34,1.3,0.64,1),
                     box-shadow 0.22s ease;
-        /* sfondo colore ambra/tortora delle bottiglie */
-        background: #7B3F1E;
       }
- 
-      /* ogni prodotto ha il suo sfondo */
-      .product-card.shampoo        { background: #6B3319; }
-      .product-card.lozione        { background: #3D2410; }
-      .product-card.conditioner    { background: #6B3319; }
-      .product-card.em-lenitiva    { background: #6B3319; }
-      .product-card.em-avvolgente  { background: #6B3319; }
-      .product-card.maschera       { background: #5C2E14; }
  
       .product-card:hover {
         transform: translateY(-4px) scale(1.025);
-        box-shadow: 0 18px 44px rgba(26,26,26,0.18);
+        box-shadow: 0 18px 44px rgba(26,26,26,0.2);
       }
- 
       .product-card:active {
         transform: scale(0.97);
         box-shadow: none;
       }
  
-      /* ── Image area ── */
+      /* ── Immagine: sfondo identico alla card, nessun box ── */
       .card-img-wrap {
         width: 100%;
         aspect-ratio: 3 / 4;
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 8%;
-        position: relative;
-        overflow: hidden;
+        padding: 10%;
+        /* STESSO colore della card — nessun riquadro visibile */
+        background: inherit;
       }
  
       .card-img-wrap img {
         width: 100%;
         height: 100%;
         object-fit: contain;
-        object-position: center;
         display: block;
         transition: transform 0.35s ease;
-        /* drop shadow per staccare la bottiglia dallo sfondo scuro */
-        filter: drop-shadow(0 8px 20px rgba(0,0,0,0.35));
+        /* ombra per dare profondità alla bottiglia */
+        filter: drop-shadow(0 10px 24px rgba(0,0,0,0.45));
       }
  
       .product-card:hover .card-img-wrap img {
-        transform: scale(1.06) translateY(-4px);
+        transform: scale(1.07) translateY(-4px);
       }
  
-      /* ── Name strip ── */
+      /* ── Strip nome ── */
       .card-name {
-        padding: 0.6rem 0.9rem 0.85rem;
+        padding: 0.65rem 0.9rem 0.85rem;
         display: flex;
         align-items: center;
         gap: 0.5rem;
+        background: inherit;
       }
  
       .card-name-line {
@@ -116,15 +102,13 @@
         font-weight: 700;
         letter-spacing: 0.14em;
         text-transform: uppercase;
-        color: rgba(255,255,255,0.88);
+        color: rgba(255,255,255,0.85);
         line-height: 1;
       }
  
-      /* ── Responsive ── */
       @media (max-width: 360px) {
         .product-grid { gap: 0.7rem; }
       }
- 
       @media (min-width: 480px) {
         .product-grid { max-width: 460px; gap: 1.1rem; }
       }
@@ -134,8 +118,7 @@
  
     <div class="product-grid">
  
-      <!-- 1 · Shampoo -->
-      <a class="product-card shampoo" href="shampoo.html" aria-label="Shampoo">
+      <a class="product-card" href="shampoo.html">
         <div class="card-img-wrap">
           <img src="https://raw.githubusercontent.com/DenirAdobati/listino-beautri-/main/Shampoo.png" alt="Shampoo Beautrì" loading="eager" />
         </div>
@@ -145,8 +128,7 @@
         </div>
       </a>
  
-      <!-- 2 · Lozione -->
-      <a class="product-card lozione" href="lozione.html" aria-label="Lozione">
+      <a class="product-card" href="lozione.html">
         <div class="card-img-wrap">
           <img src="https://raw.githubusercontent.com/DenirAdobati/listino-beautri-/main/Lozione.png" alt="Lozione Beautrì" loading="eager" />
         </div>
@@ -156,8 +138,7 @@
         </div>
       </a>
  
-      <!-- 3 · Conditioner -->
-      <a class="product-card conditioner" href="conditioner.html" aria-label="Conditioner">
+      <a class="product-card" href="conditioner.html">
         <div class="card-img-wrap">
           <img src="https://raw.githubusercontent.com/DenirAdobati/listino-beautri-/main/Conditioner.png" alt="Conditioner Beautrì" loading="eager" />
         </div>
@@ -167,8 +148,7 @@
         </div>
       </a>
  
-      <!-- 4 · Emulsione Lenitiva -->
-      <a class="product-card em-lenitiva" href="emulsione-lenitiva.html" aria-label="Emulsione Lenitiva">
+      <a class="product-card" href="emulsione-lenitiva.html">
         <div class="card-img-wrap">
           <img src="https://raw.githubusercontent.com/DenirAdobati/listino-beautri-/main/Emulsione%20lenitiva.png" alt="Emulsione Lenitiva Beautrì" loading="eager" />
         </div>
@@ -178,8 +158,7 @@
         </div>
       </a>
  
-      <!-- 5 · Emulsione Avvolgente -->
-      <a class="product-card em-avvolgente" href="emulsione-avvolgente.html" aria-label="Emulsione Avvolgente">
+      <a class="product-card" href="emulsione-avvolgente.html">
         <div class="card-img-wrap">
           <img src="https://raw.githubusercontent.com/DenirAdobati/listino-beautri-/main/Emulsione%20avvolgente.png" alt="Emulsione Avvolgente Beautrì" loading="eager" />
         </div>
@@ -189,15 +168,10 @@
         </div>
       </a>
  
-      <!-- 6 · Maschera — nome file con doppia c: Masschera.png -->
-      <a class="product-card maschera" href="maschera.html" aria-label="Maschera">
+      <a class="product-card" href="maschera.html">
         <div class="card-img-wrap">
-          <img
-            src="https://raw.githubusercontent.com/DenirAdobati/listino-beautri-/main/Masschera.png"
-            alt="Maschera Beautrì"
-            loading="eager"
-            onerror="this.src='https://raw.githubusercontent.com/DenirAdobati/listino-beautri-/main/Mascchera.png'"
-          />
+          <img src="https://raw.githubusercontent.com/DenirAdobati/listino-beautri-/main/Masschera.png" alt="Maschera Beautrì" loading="eager"
+            onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/DenirAdobati/listino-beautri-/main/Maschera.png'" />
         </div>
         <div class="card-name">
           <div class="card-name-line"></div>
@@ -223,7 +197,6 @@
     align-items: flex-end;
     gap: 0.6rem;
   }
- 
   .wa-bubble {
     background: #1A1A1A;
     color: #FFFFFF;
@@ -240,11 +213,7 @@
     transform: translateY(4px);
     animation: bubble-in 0.4s ease 1s forwards;
   }
- 
-  @keyframes bubble-in {
-    to { opacity: 1; transform: translateY(0); }
-  }
- 
+  @keyframes bubble-in { to { opacity: 1; transform: translateY(0); } }
   .wa-link {
     display: block;
     width: 58px;
@@ -257,17 +226,14 @@
     filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
     transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
   }
- 
   @keyframes icon-in {
     from { opacity: 0; transform: scale(0.5); }
     to   { opacity: 1; transform: scale(1); }
   }
- 
   @keyframes wa-ring {
     0%, 100% { filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3)) drop-shadow(0 0 0px rgba(37,211,102,0)); }
     50%       { filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3)) drop-shadow(0 0 10px rgba(37,211,102,0.5)); }
   }
- 
   .wa-link:hover { transform: scale(1.1); }
   .wa-link:active { transform: scale(0.95); }
   .wa-link img { width: 58px; height: 58px; object-fit: contain; display: block; }
