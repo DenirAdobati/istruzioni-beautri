@@ -19,11 +19,10 @@
         overflow: hidden;
         background: #E8E4DA;
         font-family: 'Outfit', sans-serif;
+        touch-action: none; /* gestiamo noi il touch */
       }
  
-      /* ══════════════════════════
-         CAROUSEL VIEW
-      ══════════════════════════ */
+      /* ══ CAROUSEL ══ */
       #carousel-view {
         position: fixed;
         inset: 0;
@@ -33,7 +32,6 @@
         justify-content: center;
       }
  
-      /* Track scorrevole */
       .carousel-track {
         display: flex;
         align-items: center;
@@ -44,10 +42,10 @@
         scroll-snap-type: x mandatory;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
+        touch-action: pan-x; /* solo swipe orizzontale */
       }
       .carousel-track::-webkit-scrollbar { display: none; }
  
-      /* Slide */
       .slide {
         flex: 0 0 100vw;
         width: 100vw;
@@ -56,11 +54,10 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        cursor: pointer;
         position: relative;
+        /* niente onclick qui — gestiamo via JS con distinzione tap/swipe */
       }
  
-      /* Bottiglia: grande, centrata, trasparente */
       .slide img {
         width: 88vw;
         max-width: 420px;
@@ -68,23 +65,23 @@
         object-fit: contain;
         user-select: none;
         pointer-events: none;
-        transition: transform 0.2s ease;
+        transition: transform 0.15s ease;
         filter: drop-shadow(0 30px 60px rgba(0,0,0,0.22));
+        -webkit-user-drag: none;
       }
  
-      .slide:active img {
-        transform: scale(0.96);
-      }
+      .slide.tapped img { transform: scale(0.96); }
  
-      /* Dots in basso */
+      /* ── Dots ── */
       .dots {
         position: fixed;
-        bottom: 2rem;
+        bottom: 1.8rem;
         left: 50%;
         transform: translateX(-50%);
         display: flex;
         gap: 7px;
         z-index: 10;
+        pointer-events: none;
       }
  
       .dot {
@@ -97,47 +94,40 @@
  
       .dot.active {
         background: #1A1A1A;
-        transform: scale(1.3);
+        transform: scale(1.35);
       }
  
-      /* Hint swipe — appare solo al primo caricamento */
+      /* ── Swipe hint — FISSO, non sparisce ── */
       .swipe-hint {
         position: fixed;
-        bottom: 4rem;
+        bottom: 3.8rem;
         left: 50%;
         transform: translateX(-50%);
         display: flex;
         align-items: center;
         gap: 0.4rem;
-        font-size: 0.6rem;
+        font-size: 0.58rem;
         font-weight: 600;
-        letter-spacing: 0.14em;
+        letter-spacing: 0.16em;
         text-transform: uppercase;
-        color: rgba(26,26,26,0.35);
-        animation: hint-fade 0.5s ease 2.5s forwards;
-        opacity: 1;
+        color: rgba(26,26,26,0.3);
         z-index: 10;
-      }
- 
-      @keyframes hint-fade {
-        to { opacity: 0; pointer-events: none; }
+        pointer-events: none;
+        white-space: nowrap;
       }
  
       .swipe-hint svg {
-        width: 18px;
-        height: 18px;
-        animation: swipe-arrow 1.2s ease-in-out 2s 3;
+        width: 14px;
+        height: 14px;
+        animation: arrow-bounce 1.6s ease-in-out infinite;
       }
  
-      @keyframes swipe-arrow {
-        0%   { transform: translateX(0); opacity: 0.4; }
-        50%  { transform: translateX(8px); opacity: 1; }
-        100% { transform: translateX(0); opacity: 0.4; }
+      @keyframes arrow-bounce {
+        0%, 100% { transform: translateX(0); opacity: 0.4; }
+        50%       { transform: translateX(5px); opacity: 1; }
       }
  
-      /* ══════════════════════════
-         VIDEO VIEW (fullscreen overlay)
-      ══════════════════════════ */
+      /* ══ VIDEO ══ */
       #video-view {
         display: none;
         position: fixed;
@@ -168,11 +158,12 @@
         background: none;
         border: none;
         cursor: pointer;
-        padding: 0;
+        padding: 0.5rem 0; /* area touch più grande */
         font-family: 'Outfit', sans-serif;
         transition: opacity 0.2s;
+        -webkit-tap-highlight-color: transparent;
       }
-      .back-btn:hover { opacity: 1; }
+      .back-btn:hover, .back-btn:active { opacity: 1; }
       .back-btn svg { width: 14px; height: 14px; }
  
       .video-wrapper {
@@ -192,9 +183,7 @@
         display: block;
       }
  
-      /* ══════════════════════════
-         WHATSAPP WIDGET
-      ══════════════════════════ */
+      /* ══ WHATSAPP ══ */
       .wa-float {
         position: fixed;
         bottom: 1.4rem;
@@ -259,9 +248,7 @@
         50%       { box-shadow: 0 0 0 8px rgba(37,211,102,0.25); }
       }
  
-      .wa-pill:hover .wa-icon { transform: scale(1.1); }
       .wa-pill:active .wa-icon { transform: scale(0.93); }
- 
       .wa-icon svg { width: 32px; height: 32px; fill: #FFFFFF; }
     </style>
   </head>
@@ -272,28 +259,28 @@
  
       <div class="carousel-track" id="track">
  
-        <div class="slide" onclick="openVideo('CuMIowDFg5w')" data-index="0">
-          <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Shampoo.png" alt="Shampoo" loading="eager" />
+        <div class="slide" data-video="CuMIowDFg5w">
+          <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Shampoo.png" alt="Shampoo" loading="eager" draggable="false" />
         </div>
  
-        <div class="slide" onclick="openVideo('1b4h6CX64eY')" data-index="1">
-          <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Lozione.png" alt="Lozione" loading="eager" />
+        <div class="slide" data-video="1b4h6CX64eY">
+          <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Lozione.png" alt="Lozione" loading="eager" draggable="false" />
         </div>
  
-        <div class="slide" onclick="openVideo('S7pz1fwtHiQ')" data-index="2">
-          <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Conditioner.png" alt="Conditioner" loading="eager" />
+        <div class="slide" data-video="S7pz1fwtHiQ">
+          <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Conditioner.png" alt="Conditioner" loading="eager" draggable="false" />
         </div>
  
-        <div class="slide" onclick="openVideo('Fs5UVQApcn4')" data-index="3">
-          <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Emulsione%20LENITIVA.png" alt="Emulsione Lenitiva" loading="eager" />
+        <div class="slide" data-video="Fs5UVQApcn4">
+          <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Emulsione%20LENITIVA.png" alt="Emulsione Lenitiva" loading="eager" draggable="false" />
         </div>
  
-        <div class="slide" onclick="openVideo('O8fJ_afMtsg')" data-index="4">
-          <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Emulsione%20AVVOLGENTE.png" alt="Emulsione Avvolgente" loading="eager" />
+        <div class="slide" data-video="O8fJ_afMtsg">
+          <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Emulsione%20AVVOLGENTE.png" alt="Emulsione Avvolgente" loading="eager" draggable="false" />
         </div>
  
-        <div class="slide" onclick="openVideo('CpbqIZhjxu0')" data-index="5">
-          <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Maschera.png" alt="Maschera" loading="eager" />
+        <div class="slide" data-video="CpbqIZhjxu0">
+          <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Maschera.png" alt="Maschera" loading="eager" draggable="false" />
         </div>
  
       </div>
@@ -308,10 +295,10 @@
         <div class="dot"></div>
       </div>
  
-      <!-- Hint swipe -->
+      <!-- Swipe hint FISSO -->
       <div class="swipe-hint">
         Scorri
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="9,6 15,12 9,18"/>
         </svg>
       </div>
@@ -320,7 +307,7 @@
  
     <!-- ══ VIDEO ══ -->
     <div id="video-view">
-      <button class="back-btn" onclick="closeVideo()">
+      <button class="back-btn" id="back-btn">
         <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="9,2 4,7 9,12"/>
         </svg>
@@ -347,21 +334,73 @@
     </div>
  
     <script>
-      // ── Dots aggiornati sullo scroll ──
-      const track = document.getElementById('track');
-      const dots  = document.querySelectorAll('.dot');
+      const track   = document.getElementById('track');
+      const dots    = document.querySelectorAll('.dot');
+      const slides  = document.querySelectorAll('.slide');
  
+      /* ── Aggiorna dots sullo scroll ── */
       track.addEventListener('scroll', () => {
         const idx = Math.round(track.scrollLeft / window.innerWidth);
         dots.forEach((d, i) => d.classList.toggle('active', i === idx));
       }, { passive: true });
  
-      // ── Video ──
+      /* ── Distinzione TAP vs SWIPE ──
+         Registriamo la posizione touchstart.
+         Se lo spostamento X è < 10px = tap → apriamo video.
+         Se è >= 10px = swipe → ignoriamo. */
+      let touchStartX = 0;
+      let touchStartY = 0;
+      let isSwiping   = false;
+ 
+      track.addEventListener('touchstart', (e) => {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        isSwiping = false;
+      }, { passive: true });
+ 
+      track.addEventListener('touchmove', (e) => {
+        const dx = Math.abs(e.touches[0].clientX - touchStartX);
+        const dy = Math.abs(e.touches[0].clientY - touchStartY);
+        if (dx > 8 || dy > 8) isSwiping = true;
+      }, { passive: true });
+ 
+      track.addEventListener('touchend', (e) => {
+        if (isSwiping) return; /* era uno swipe, ignora */
+ 
+        /* Trova la slide corrente */
+        const idx = Math.round(track.scrollLeft / window.innerWidth);
+        const slide = slides[idx];
+        if (!slide) return;
+ 
+        /* Feedback visivo */
+        slide.classList.add('tapped');
+        setTimeout(() => slide.classList.remove('tapped'), 150);
+ 
+        /* Apri video dopo breve delay per il feedback */
+        setTimeout(() => openVideo(slide.dataset.video), 120);
+      }, { passive: true });
+ 
+      /* ── Supporto click desktop ── */
+      slides.forEach(slide => {
+        slide.addEventListener('click', () => {
+          openVideo(slide.dataset.video);
+        });
+      });
+ 
+      /* ── Video ── */
       function openVideo(ytid) {
-        document.getElementById('video-iframe').src =
-          'https://www.youtube.com/embed/' + ytid + '?autoplay=1&rel=0&modestbranding=1&playsinline=1';
+        if (!ytid) return;
+        const iframe = document.getElementById('video-iframe');
+        iframe.src = 'https://www.youtube.com/embed/' + ytid +
+          '?autoplay=1&rel=0&modestbranding=1&playsinline=1';
         document.getElementById('video-view').classList.add('active');
       }
+ 
+      document.getElementById('back-btn').addEventListener('click', closeVideo);
+      document.getElementById('back-btn').addEventListener('touchend', function(e) {
+        e.preventDefault();
+        closeVideo();
+      });
  
       function closeVideo() {
         document.getElementById('video-iframe').src = '';
