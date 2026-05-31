@@ -19,7 +19,7 @@
         overflow: hidden;
         background: #E8E4DA;
         font-family: 'Outfit', sans-serif;
-        touch-action: none; /* gestiamo noi il touch */
+        touch-action: none;
       }
  
       /* ══ CAROUSEL ══ */
@@ -42,7 +42,7 @@
         scroll-snap-type: x mandatory;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
-        touch-action: pan-x; /* solo swipe orizzontale */
+        touch-action: pan-x;
       }
       .carousel-track::-webkit-scrollbar { display: none; }
  
@@ -55,18 +55,18 @@
         align-items: center;
         justify-content: center;
         position: relative;
-        /* niente onclick qui — gestiamo via JS con distinzione tap/swipe */
       }
  
+      /* Immagini più grandi */
       .slide img {
-        width: 88vw;
-        max-width: 420px;
-        max-height: 88vh;
+        width: 94vw;
+        max-width: 480px;
+        max-height: 90vh;
         object-fit: contain;
         user-select: none;
         pointer-events: none;
         transition: transform 0.15s ease;
-        filter: drop-shadow(0 30px 60px rgba(0,0,0,0.22));
+        filter: drop-shadow(0 32px 64px rgba(0,0,0,0.25));
         -webkit-user-drag: none;
       }
  
@@ -97,190 +97,140 @@
         transform: scale(1.35);
       }
  
-      /* ── Swipe hint — FISSO, non sparisce ── */
-      .swipe-hint {
+      /* ══ WIDGET SWIPE — pill in basso al centro ══ */
+      #widget-swipe {
         position: fixed;
-        bottom: 3.8rem;
+        bottom: 3.6rem;
         left: 50%;
         transform: translateX(-50%);
-        display: flex;
-        align-items: center;
-        gap: 0.4rem;
-        font-size: 0.58rem;
-        font-weight: 600;
-        letter-spacing: 0.16em;
-        text-transform: uppercase;
-        color: rgba(26,26,26,0.3);
-        z-index: 10;
+        z-index: 50;
         pointer-events: none;
-        white-space: nowrap;
+        opacity: 0;
+        animation: wfade-in 0.5s ease 0.6s forwards;
+        transition: opacity 0.4s ease;
       }
  
-      .swipe-hint svg {
-        width: 14px;
-        height: 14px;
-        animation: arrow-bounce 1.6s ease-in-out infinite;
-      }
+      @keyframes wfade-in { to { opacity: 1; } }
  
-      @keyframes arrow-bounce {
-        0%, 100% { transform: translateX(0); opacity: 0.4; }
-        50%       { transform: translateX(5px); opacity: 1; }
-      }
- 
-      /* ── Play Badge su ogni slide ── */
-      .play-badge {
-        position: absolute;
-        bottom: 10%;
-        left: 50%;
-        transform: translateX(-50%);
+      .swipe-pill {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        background: rgba(26,26,26,0.82);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border: 1px solid rgba(255,255,255,0.12);
+        gap: 0.55rem;
+        background: rgba(26,26,26,0.78);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255,255,255,0.1);
         border-radius: 50px;
-        padding: 0.5rem 1.1rem 0.5rem 0.75rem;
-        cursor: pointer;
-        pointer-events: none; /* il click lo gestisce il JS della slide */
+        padding: 0.52rem 1.1rem 0.52rem 0.75rem;
         white-space: nowrap;
-        animation: badge-pulse 2.8s ease-in-out infinite;
       }
  
-      @keyframes badge-pulse {
-        0%, 100% { box-shadow: 0 0 0 0 rgba(234,179,10,0); }
-        50%       { box-shadow: 0 0 0 6px rgba(234,179,10,0.2); }
+      .swipe-pill .hand-icon {
+        font-size: 1.1rem;
+        display: inline-block;
+        animation: swipe-hand 1.8s ease-in-out 1.2s 3;
       }
  
-      .play-badge .play-icon {
-        width: 28px;
-        height: 28px;
-        background: #EAB30A;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        animation: icon-ping 2.8s ease-in-out infinite;
+      @keyframes swipe-hand {
+        0%   { transform: translateX(0); }
+        30%  { transform: translateX(10px); }
+        60%  { transform: translateX(-4px); }
+        100% { transform: translateX(0); }
       }
  
-      @keyframes icon-ping {
-        0%, 100% { transform: scale(1); }
-        50%       { transform: scale(1.1); }
-      }
- 
-      .play-badge .play-icon svg {
-        width: 11px;
-        height: 11px;
-        fill: #1A1A1A;
-        margin-left: 2px;
-      }
- 
-      .play-badge .play-label {
+      .swipe-pill .pill-text {
         font-family: 'Outfit', sans-serif;
-        font-size: 0.68rem;
+        font-size: 0.65rem;
         font-weight: 700;
         letter-spacing: 0.1em;
         text-transform: uppercase;
         color: #FFFFFF;
       }
  
-      /* ── Swipe Gesture Overlay (primo avvio) ── */
-      #swipe-overlay {
-        position: fixed;
-        inset: 0;
-        z-index: 100;
-        pointer-events: none;
+      .swipe-pill .arrow-icon {
         display: flex;
         align-items: center;
-        justify-content: center;
+        animation: arrow-slide 1.8s ease-in-out 1.2s 3;
       }
  
-      .swipe-gesture {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.6rem;
-        opacity: 0;
-        animation: gesture-show 0.6s ease 0.8s forwards,
-                   gesture-hide 0.5s ease 3.5s forwards;
+      @keyframes arrow-slide {
+        0%   { transform: translateX(0); opacity: 0.5; }
+        30%  { transform: translateX(5px); opacity: 1; }
+        60%  { transform: translateX(-2px); opacity: 0.7; }
+        100% { transform: translateX(0); opacity: 0.5; }
       }
  
-      @keyframes gesture-show { to { opacity: 1; } }
-      @keyframes gesture-hide { to { opacity: 0; } }
- 
-      .gesture-hand {
-        font-size: 2.2rem;
-        animation: hand-swipe 1.2s ease-in-out 1.4s 2 forwards;
+      .swipe-pill .arrow-icon svg {
+        width: 13px;
+        height: 13px;
+        stroke: rgba(255,255,255,0.6);
       }
  
-      @keyframes hand-swipe {
-        0%   { transform: translateX(0); }
-        40%  { transform: translateX(-28px); }
-        70%  { transform: translateX(28px); }
-        100% { transform: translateX(0); }
-      }
- 
-      .gesture-label {
-        font-family: 'Outfit', sans-serif;
-        font-size: 0.62rem;
-        font-weight: 700;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        color: rgba(26,26,26,0.45);
-        background: rgba(232,228,218,0.85);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        border-radius: 20px;
-        padding: 0.3rem 0.9rem;
-      }
- 
-      /* ── Tap Hint (appare dopo qualche secondo) ── */
-      #tap-hint {
+      /* ══ WIDGET TAP — fumetto dall'alto ══ */
+      #widget-tap {
         position: fixed;
-        top: 50%;
+        top: 1.4rem;
         left: 50%;
-        transform: translate(-50%, calc(-50% + 52vw));
-        z-index: 90;
+        transform: translateX(-50%) translateY(-20px);
+        z-index: 50;
         pointer-events: none;
         opacity: 0;
-        animation: tap-hint-in  0.5s ease 4.2s forwards,
-                   tap-hint-out 0.5s ease 7.5s forwards;
+        /* Appare dopo 4s, sparisce dopo 8s */
+        animation: bubble-in 0.5s cubic-bezier(0.34,1.4,0.64,1) 4s forwards,
+                   bubble-out 0.4s ease 8s forwards;
       }
  
-      @keyframes tap-hint-in  { to { opacity: 1; } }
-      @keyframes tap-hint-out { to { opacity: 0; } }
+      @keyframes bubble-in {
+        to { opacity: 1; transform: translateX(-50%) translateY(0); }
+      }
+      @keyframes bubble-out {
+        to { opacity: 0; transform: translateX(-50%) translateY(-12px); }
+      }
  
-      .tap-hint-inner {
+      .tap-bubble {
+        position: relative;
         display: flex;
         align-items: center;
-        gap: 0.45rem;
-        background: rgba(234,179,10,0.92);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        border-radius: 50px;
-        padding: 0.45rem 1rem 0.45rem 0.7rem;
+        gap: 0.5rem;
+        background: #EAB30A;
+        border-radius: 16px;
+        padding: 0.6rem 1.1rem 0.6rem 0.85rem;
+        box-shadow: 0 6px 24px rgba(234,179,10,0.35);
+        white-space: nowrap;
       }
  
-      .tap-icon {
-        font-size: 1rem;
-        animation: tap-anim 1s ease-in-out 4.7s 3;
+      /* Codina del fumetto verso il basso */
+      .tap-bubble::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 0;
+        border-left: 9px solid transparent;
+        border-right: 9px solid transparent;
+        border-top: 9px solid #EAB30A;
       }
  
-      @keyframes tap-anim {
-        0%, 100% { transform: scale(1); }
-        40%       { transform: scale(0.8); }
+      .tap-bubble .tap-finger {
+        font-size: 1.1rem;
+        display: inline-block;
+        animation: finger-tap 1s ease-in-out 4.5s 4;
       }
  
-      .tap-hint-inner span {
+      @keyframes finger-tap {
+        0%, 100% { transform: scale(1) translateY(0); }
+        40%       { transform: scale(0.85) translateY(2px); }
+      }
+ 
+      .tap-bubble .bubble-text {
         font-family: 'Outfit', sans-serif;
-        font-size: 0.65rem;
-        font-weight: 700;
-        letter-spacing: 0.08em;
+        font-size: 0.68rem;
+        font-weight: 800;
+        letter-spacing: 0.06em;
         text-transform: uppercase;
         color: #1A1A1A;
-        white-space: nowrap;
       }
  
       /* ══ VIDEO ══ */
@@ -314,7 +264,7 @@
         background: none;
         border: none;
         cursor: pointer;
-        padding: 0.5rem 0; /* area touch più grande */
+        padding: 0.5rem 0;
         font-family: 'Outfit', sans-serif;
         transition: opacity 0.2s;
         -webkit-tap-highlight-color: transparent;
@@ -417,32 +367,26 @@
  
         <div class="slide" data-video="CuMIowDFg5w">
           <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Shampoo.png" alt="Shampoo" loading="eager" draggable="false" />
-          <div class="play-badge"><div class="play-icon"><svg viewBox="0 0 10 10"><polygon points="2,1 9,5 2,9"/></svg></div><span class="play-label">Vedi Tutorial</span></div>
         </div>
  
         <div class="slide" data-video="1b4h6CX64eY">
           <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Lozione.png" alt="Lozione" loading="eager" draggable="false" />
-          <div class="play-badge"><div class="play-icon"><svg viewBox="0 0 10 10"><polygon points="2,1 9,5 2,9"/></svg></div><span class="play-label">Vedi Tutorial</span></div>
         </div>
  
         <div class="slide" data-video="S7pz1fwtHiQ">
           <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Conditioner.png" alt="Conditioner" loading="eager" draggable="false" />
-          <div class="play-badge"><div class="play-icon"><svg viewBox="0 0 10 10"><polygon points="2,1 9,5 2,9"/></svg></div><span class="play-label">Vedi Tutorial</span></div>
         </div>
  
         <div class="slide" data-video="Fs5UVQApcn4">
           <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Emulsione%20LENITIVA.png" alt="Emulsione Lenitiva" loading="eager" draggable="false" />
-          <div class="play-badge"><div class="play-icon"><svg viewBox="0 0 10 10"><polygon points="2,1 9,5 2,9"/></svg></div><span class="play-label">Vedi Tutorial</span></div>
         </div>
  
         <div class="slide" data-video="O8fJ_afMtsg">
           <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Emulsione%20AVVOLGENTE.png" alt="Emulsione Avvolgente" loading="eager" draggable="false" />
-          <div class="play-badge"><div class="play-icon"><svg viewBox="0 0 10 10"><polygon points="2,1 9,5 2,9"/></svg></div><span class="play-label">Vedi Tutorial</span></div>
         </div>
  
         <div class="slide" data-video="CpbqIZhjxu0">
           <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Maschera.png" alt="Maschera" loading="eager" draggable="false" />
-          <div class="play-badge"><div class="play-icon"><svg viewBox="0 0 10 10"><polygon points="2,1 9,5 2,9"/></svg></div><span class="play-label">Vedi Tutorial</span></div>
         </div>
  
       </div>
@@ -457,31 +401,30 @@
         <div class="dot"></div>
       </div>
  
-      <!-- Swipe hint FISSO -->
-      <div class="swipe-hint">
-        Scorri
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="9,6 15,12 9,18"/>
-        </svg>
-      </div>
+    </div>
  
-    </div><!-- fine carousel-view -->
- 
-    <!-- ── Swipe Gesture Overlay ── -->
-    <div id="swipe-overlay">
-      <div class="swipe-gesture">
-        <div class="gesture-hand">👆</div>
-        <div class="gesture-label">Scorri per cambiare prodotto</div>
+    <!-- ══ WIDGET SWIPE — pill scuro in basso ══ -->
+    <div id="widget-swipe">
+      <div class="swipe-pill">
+        <span class="hand-icon">👉</span>
+        <span class="pill-text">Scorri a destra per i prodotti</span>
+        <span class="arrow-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9,6 15,12 9,18"/>
+          </svg>
+        </span>
       </div>
     </div>
  
-    <!-- ── Tap Hint ── -->
-    <div id="tap-hint">
-      <div class="tap-hint-inner">
-        <span class="tap-icon">👆</span>
-        <span>Tocca per il tutorial</span>
+    <!-- ══ WIDGET TAP — fumetto dall'alto ══ -->
+    <div id="widget-tap">
+      <div class="tap-bubble">
+        <span class="tap-finger">👆</span>
+        <span class="bubble-text">Tocca il prodotto per il tutorial</span>
       </div>
     </div>
+ 
+    <!-- ══ VIDEO ══ -->
     <div id="video-view">
       <button class="back-btn" id="back-btn">
         <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -510,33 +453,29 @@
     </div>
  
     <script>
-      const track   = document.getElementById('track');
-      const dots    = document.querySelectorAll('.dot');
-      const slides  = document.querySelectorAll('.slide');
-      const swipeOverlay = document.getElementById('swipe-overlay');
-      const tapHint      = document.getElementById('tap-hint');
+      const track      = document.getElementById('track');
+      const dots       = document.querySelectorAll('.dot');
+      const slides     = document.querySelectorAll('.slide');
+      const widgetSwipe = document.getElementById('widget-swipe');
+      const widgetTap   = document.getElementById('widget-tap');
  
       let hasSwipedOnce = false;
+      let hasTappedOnce = false;
  
       /* ── Aggiorna dots sullo scroll ── */
       track.addEventListener('scroll', () => {
         const idx = Math.round(track.scrollLeft / window.innerWidth);
         dots.forEach((d, i) => d.classList.toggle('active', i === idx));
  
-        /* Nascondi swipe overlay al primo scroll reale */
+        /* Al primo swipe reale → nascondi widget swipe */
         if (!hasSwipedOnce && track.scrollLeft > 10) {
           hasSwipedOnce = true;
-          swipeOverlay.style.transition = 'opacity 0.4s ease';
-          swipeOverlay.style.opacity = '0';
-          tapHint.style.animationPlayState = 'running';
-          setTimeout(() => swipeOverlay.style.display = 'none', 400);
+          widgetSwipe.style.opacity = '0';
+          setTimeout(() => widgetSwipe.style.display = 'none', 400);
         }
       }, { passive: true });
  
-      /* ── Distinzione TAP vs SWIPE ──
-         Registriamo la posizione touchstart.
-         Se lo spostamento X è < 10px = tap → apriamo video.
-         Se è >= 10px = swipe → ignoriamo. */
+      /* ── Distinzione TAP vs SWIPE ── */
       let touchStartX = 0;
       let touchStartY = 0;
       let isSwiping   = false;
@@ -554,34 +493,34 @@
       }, { passive: true });
  
       track.addEventListener('touchend', (e) => {
-        if (isSwiping) return; /* era uno swipe, ignora */
+        if (isSwiping) return;
  
-        /* Trova la slide corrente */
         const idx = Math.round(track.scrollLeft / window.innerWidth);
         const slide = slides[idx];
         if (!slide) return;
  
-        /* Feedback visivo */
         slide.classList.add('tapped');
         setTimeout(() => slide.classList.remove('tapped'), 150);
- 
-        /* Apri video dopo breve delay per il feedback */
         setTimeout(() => openVideo(slide.dataset.video), 120);
       }, { passive: true });
  
       /* ── Supporto click desktop ── */
       slides.forEach(slide => {
-        slide.addEventListener('click', () => {
-          openVideo(slide.dataset.video);
-        });
+        slide.addEventListener('click', () => openVideo(slide.dataset.video));
       });
  
       /* ── Video ── */
       function openVideo(ytid) {
         if (!ytid) return;
-        /* Nascondi tap hint al primo tap */
-        tapHint.style.transition = 'opacity 0.3s ease';
-        tapHint.style.opacity = '0';
+ 
+        /* Al primo tap → nascondi widget tap */
+        if (!hasTappedOnce) {
+          hasTappedOnce = true;
+          widgetTap.style.transition = 'opacity 0.3s ease';
+          widgetTap.style.opacity = '0';
+          setTimeout(() => widgetTap.style.display = 'none', 300);
+        }
+ 
         const iframe = document.getElementById('video-iframe');
         iframe.src = 'https://www.youtube.com/embed/' + ytid +
           '?autoplay=1&rel=0&modestbranding=1&playsinline=1';
