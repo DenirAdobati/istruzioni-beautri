@@ -302,8 +302,10 @@
         padding: 0.5rem;
         background: var(--bg-card);
         border-bottom-left-radius: 4px;
-        max-width: 84%;
+        /* Il video è uno YouTube Short verticale: bolla più stretta e alta,
+           dimensionata sul formato 9:16 invece che sul 16:9 orizzontale */
         width: 100%;
+        max-width: 280px;
       }
 
       .video-caption {
@@ -316,7 +318,7 @@
 
       .video-frame {
         width: 100%;
-        aspect-ratio: 16 / 9;
+        aspect-ratio: 9 / 16;
         border-radius: 12px;
         overflow: hidden;
         background: #000000;
@@ -458,6 +460,60 @@
       const messagesEl    = document.getElementById('chat-messages');
       const formEl        = document.getElementById('chat-form');
       const inputEl       = document.getElementById('chat-input');
+
+      /* ── Effetto "macchina da scrivere" sul placeholder della barra di input ──
+         Parte da solo al caricamento; si ferma appena l'utente entra in focus o
+         digita; riprende in loop (scrive → pausa → cancella → pausa) solo quando
+         il campo torna vuoto e non è in focus. */
+      (function initPlaceholderTypewriter() {
+        const TEXT = 'Scrivi di che cosa hai bisogno…';
+        const TYPE_SPEED = 60;
+        const ERASE_SPEED = 30;
+        const PAUSE_AFTER_TYPE = 2200;
+        const PAUSE_AFTER_ERASE = 500;
+
+        let timer = null;
+        const isIdle = () => document.activeElement !== inputEl && inputEl.value === '';
+
+        function stopTypewriter() {
+          clearTimeout(timer);
+          timer = null;
+        }
+
+        function cycle() {
+          if (!isIdle()) return;
+          let i = 0;
+          inputEl.placeholder = '';
+
+          (function typeStep() {
+            if (!isIdle()) return;
+            if (i <= TEXT.length) {
+              inputEl.placeholder = TEXT.slice(0, i++);
+              timer = setTimeout(typeStep, TYPE_SPEED);
+            } else {
+              timer = setTimeout(eraseStep, PAUSE_AFTER_TYPE);
+            }
+          })();
+
+          function eraseStep() {
+            if (!isIdle()) return;
+            if (i > 0) {
+              inputEl.placeholder = TEXT.slice(0, --i);
+              timer = setTimeout(eraseStep, ERASE_SPEED);
+            } else {
+              timer = setTimeout(cycle, PAUSE_AFTER_ERASE);
+            }
+          }
+        }
+
+        inputEl.addEventListener('focus', stopTypewriter);
+        inputEl.addEventListener('input', stopTypewriter);
+        inputEl.addEventListener('blur', () => {
+          if (inputEl.value === '') cycle();
+        });
+
+        cycle();
+      })();
 
       /* ── Passaggio dalla schermata iniziale alla conversazione ── */
       let started = false;
