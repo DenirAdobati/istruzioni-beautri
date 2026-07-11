@@ -8,537 +8,698 @@
     <link rel="apple-touch-icon" href="https://beautri.it/wp-content/uploads/2020/02/cropped-favicon_beautri-270x270.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&display=swap" rel="stylesheet">
- 
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
     <style>
+      :root {
+        --bg:           #FFFFFF;
+        --bg-card:      #111111;
+        --bg-soft:      #F5F5F5;
+        --accent:       #F5C200;
+        --accent-h:     #E6B800;
+        --accent-glow:  rgba(245,194,0,0.35);
+        --text:         #0A0A0A;
+        --text-2:       #666666;
+        --border:       #E5E5E5;
+        --border-2:     #2A2A2A;
+      }
+
       * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
- 
+
       html, body {
         width: 100%;
         height: 100%;
         overflow: hidden;
-        background: #E8E4DA;
-        font-family: 'Outfit', sans-serif;
-        touch-action: none;
+        background: var(--bg);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        color: var(--text);
       }
- 
-      /* ══ CAROUSEL ══ */
-      #carousel-view {
+
+      /* ══ APP SHELL ══ */
+      /* Sfondo pagina: griglia sottile grigio chiaro su bianco, stesso pattern .grid-bg di beautri.it */
+      #app {
         position: fixed;
         inset: 0;
         display: flex;
-        flex-direction: column;
-        align-items: center;
         justify-content: center;
+        background-color: #FFFFFF;
+        background-image:
+          linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+        background-size: 40px 40px;
       }
- 
-      .carousel-track {
-        display: flex;
-        align-items: center;
+
+      /* Colonna app centrata orizzontalmente sulla pagina */
+      .app-inner {
         width: 100%;
+        max-width: 520px;
         height: 100%;
-        overflow-x: scroll;
-        overflow-y: hidden;
-        scroll-snap-type: x mandatory;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-        touch-action: pan-x;
+        display: flex;
+        flex-direction: column;
       }
-      .carousel-track::-webkit-scrollbar { display: none; }
- 
-      .slide {
-        flex: 0 0 100vw;
-        width: 100vw;
-        height: 100%;
-        scroll-snap-align: center;
+
+      /* ── Header "isola": pill identica a #main-navbar / .nav-inner di beautri.it ──
+         Stesse misure esatte del sito: top 16px, margini laterali 34px (calc(100% - 68px)),
+         padding 14px 16px, background rgba(10,10,10,.25) + blur 20px, radius 999px,
+         logo 28px con gap 8px, testo 800/18px bianco.
+         Stesso comportamento di scroll del sito: #main-navbar è fixed e resta in overlay
+         mentre .hero scorre sotto (con padding-top di compensazione); qui replichiamo lo
+         stesso schema con .header-island-wrap fixed + padding-top su .intro-group/.chat-messages. ── */
+      .header-island-wrap {
+        position: fixed;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        max-width: 520px;
+        padding: 16px 34px;
+        z-index: 100;
+        pointer-events: none;
+      }
+
+      .header-island {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 8px;
+        padding: 14px 16px;
+        background: rgba(10,10,10,0.25);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 999px;
+        box-shadow: 0 4px 32px rgba(0,0,0,0.25);
+        pointer-events: auto;
+      }
+
+      .header-logo-icon {
+        height: 28px;
+        width: 28px;
+        flex-shrink: 0;
         display: flex;
         align-items: center;
         justify-content: center;
-        position: relative;
       }
- 
-      /* Immagini più grandi */
-      .slide img {
-        width: 94vw;
-        max-width: 480px;
-        max-height: 90vh;
-        object-fit: contain;
-        user-select: none;
-        pointer-events: none;
-        transition: transform 0.15s ease;
-        filter: drop-shadow(0 32px 64px rgba(0,0,0,0.25));
-        -webkit-user-drag: none;
-      }
- 
-      .slide.tapped img { transform: scale(0.96); }
- 
-      /* ── Dots ── */
-      .dots {
-        position: fixed;
-        bottom: 1.8rem;
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        gap: 7px;
-        z-index: 10;
-        pointer-events: none;
-      }
- 
-      .dot {
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background: rgba(26,26,26,0.2);
-        transition: background 0.3s, transform 0.3s;
-      }
- 
-      .dot.active {
-        background: #1A1A1A;
-        transform: scale(1.35);
-      }
- 
-      /* ══ WIDGET SWIPE — pill in basso al centro ══ */
-      #widget-swipe {
-        position: fixed;
-        bottom: 3.6rem;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 50;
-        pointer-events: none;
-        opacity: 0;
-        animation: wfade-in 0.5s ease 0.6s forwards;
-        transition: opacity 0.4s ease;
-      }
- 
-      @keyframes wfade-in { to { opacity: 1; } }
- 
-      .swipe-pill {
-        display: flex;
-        align-items: center;
-        gap: 0.55rem;
-        background: rgba(26,26,26,0.78);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(255,255,255,0.1);
-        border-radius: 50px;
-        padding: 0.52rem 1.1rem 0.52rem 0.75rem;
-        white-space: nowrap;
-      }
- 
-      .swipe-pill .hand-icon {
-        font-size: 1.1rem;
-        display: inline-block;
-        animation: swipe-hand 1.8s ease-in-out 1.2s 3;
-      }
- 
-      @keyframes swipe-hand {
-        0%   { transform: translateX(0); }
-        30%  { transform: translateX(10px); }
-        60%  { transform: translateX(-4px); }
-        100% { transform: translateX(0); }
-      }
- 
-      .swipe-pill .pill-text {
-        font-family: 'Outfit', sans-serif;
-        font-size: 0.65rem;
-        font-weight: 700;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: #FFFFFF;
-      }
- 
-      .swipe-pill .arrow-icon {
-        display: flex;
-        align-items: center;
-        animation: arrow-slide 1.8s ease-in-out 1.2s 3;
-      }
- 
-      @keyframes arrow-slide {
-        0%   { transform: translateX(0); opacity: 0.5; }
-        30%  { transform: translateX(5px); opacity: 1; }
-        60%  { transform: translateX(-2px); opacity: 0.7; }
-        100% { transform: translateX(0); opacity: 0.5; }
-      }
- 
-      .swipe-pill .arrow-icon svg {
-        width: 13px;
-        height: 13px;
-        stroke: rgba(255,255,255,0.6);
-      }
- 
-      /* ══ WIDGET TAP — fumetto dall'alto ══ */
-      #widget-tap {
-        position: fixed;
-        top: 1.4rem;
-        left: 50%;
-        transform: translateX(-50%) translateY(-20px);
-        z-index: 50;
-        pointer-events: none;
-        opacity: 0;
-        /* Appare dopo 4s, sparisce dopo 8s */
-        animation: bubble-in 0.5s cubic-bezier(0.34,1.4,0.64,1) 4s forwards,
-                   bubble-out 0.4s ease 8s forwards;
-      }
- 
-      @keyframes bubble-in {
-        to { opacity: 1; transform: translateX(-50%) translateY(0); }
-      }
-      @keyframes bubble-out {
-        to { opacity: 0; transform: translateX(-50%) translateY(-12px); }
-      }
- 
-      .tap-bubble {
-        position: relative;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: #EAB30A;
-        border-radius: 16px;
-        padding: 0.6rem 1.1rem 0.6rem 0.85rem;
-        box-shadow: 0 6px 24px rgba(234,179,10,0.35);
-        white-space: nowrap;
-      }
- 
-      /* Codina del fumetto verso il basso */
-      .tap-bubble::after {
-        content: '';
-        position: absolute;
-        bottom: -8px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 0;
-        height: 0;
-        border-left: 9px solid transparent;
-        border-right: 9px solid transparent;
-        border-top: 9px solid #EAB30A;
-      }
- 
-      .tap-bubble .tap-finger {
-        font-size: 1.1rem;
-        display: inline-block;
-        animation: finger-tap 1s ease-in-out 4.5s 4;
-      }
- 
-      @keyframes finger-tap {
-        0%, 100% { transform: scale(1) translateY(0); }
-        40%       { transform: scale(0.85) translateY(2px); }
-      }
- 
-      .tap-bubble .bubble-text {
-        font-family: 'Outfit', sans-serif;
-        font-size: 0.68rem;
+      .header-logo-icon img { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+      .header-logo-text {
         font-weight: 800;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        color: #1A1A1A;
+        font-size: 18px;
+        color: #FFFFFF;
+        flex-shrink: 0;
       }
- 
-      /* ══ VIDEO ══ */
-      #video-view {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: #E8E4DA;
+
+      /* ── Gruppo centrale: domanda guida + barra di input, raggruppati e centrati
+         verticalmente sotto l'header. Dopo il primo messaggio il gruppo si riduce
+         alla sola barra di input, che scivola in fondo mentre i messaggi (in ordine
+         visivo invertito con .chat-messages) riempiono lo spazio sopra. ── */
+      .intro-group {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 20px;
+        /* 104px = altezza dell'header fixed (88px) + gap originale (1rem), così il
+           contenuto non nasce coperto dalla pillola, come .hero{padding-top} sul sito */
+        padding: 104px 0 1.5rem;
+      }
+
+      #app.started .intro-group {
+        flex: 0 0 auto;
+        justify-content: flex-start;
+        gap: 0;
+        padding: 0;
+        order: 2;
+      }
+
+      /* ── Intro: domanda guida, visibile solo prima del primo messaggio ── */
+      .intro {
+        display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
-        padding: 3.5rem 1rem 1rem;
-        z-index: 200;
+        text-align: center;
+        padding: 0 1.6rem;
+        gap: 12px;
       }
- 
-      #video-view.active { display: flex; }
- 
-      .back-btn {
-        position: absolute;
-        top: 1.1rem;
-        left: 1.2rem;
+
+      .intro-title {
+        font-size: clamp(1.55rem, 6.5vw, 2.15rem);
+        font-weight: 900;
+        letter-spacing: -0.03em;
+        line-height: 1.15;
+        color: var(--text);
+        max-width: 320px;
+      }
+
+      .intro-title .accent-word { color: var(--accent); }
+
+      .intro-sub {
+        font-size: 0.86rem;
+        font-weight: 500;
+        color: var(--text-2);
+        max-width: 260px;
+        line-height: 1.5;
+      }
+
+      #app.started .intro { display: none; }
+
+      /* ── Messages ── */
+      .chat-messages {
+        display: none;
+        flex: 1 1 auto;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        /* padding-top (non margin) = i messaggi scorrono davvero sotto l'header fixed,
+           passando dietro la pillola invece di fermarsi con uno spazio vuoto sotto */
+        padding: 104px 1rem 1.4rem;
+        flex-direction: column;
+        gap: 10px;
+        scroll-behavior: smooth;
+      }
+
+      #app.started .chat-messages { display: flex; order: 1; }
+
+      .msg {
+        display: flex;
+        align-items: flex-end;
+        gap: 8px;
+        max-width: 100%;
+        animation: msg-in 0.28s ease;
+      }
+
+      @keyframes msg-in {
+        from { opacity: 0; transform: translateY(8px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      .msg.user { justify-content: flex-end; }
+      .msg.bot  { justify-content: flex-start; }
+
+      .msg .mini-avatar {
+        width: 24px;
+        height: 24px;
         display: flex;
         align-items: center;
-        gap: 0.4rem;
-        font-size: 0.65rem;
-        font-weight: 700;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: #1A1A1A;
-        opacity: 0.45;
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 0.5rem 0;
-        font-family: 'Outfit', sans-serif;
-        transition: opacity 0.2s;
-        -webkit-tap-highlight-color: transparent;
+        justify-content: center;
+        flex-shrink: 0;
       }
-      .back-btn:hover, .back-btn:active { opacity: 1; }
-      .back-btn svg { width: 14px; height: 14px; }
- 
-      .video-wrapper {
-        width: 100%;
-        height: calc(100vh - 5rem);
-        max-width: calc((100vh - 5rem) * 9 / 16);
+      .msg .mini-avatar img { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+      .bubble {
+        max-width: 78%;
+        padding: 0.72rem 0.95rem;
         border-radius: 18px;
-        overflow: hidden;
-        box-shadow: 0 16px 48px rgba(26,26,26,0.2);
-        background: #1A1A1A;
+        font-size: 0.9rem;
+        line-height: 1.45;
+        font-weight: 500;
+        word-wrap: break-word;
       }
- 
-      .video-wrapper iframe {
+
+      .bubble.bot {
+        background: var(--bg-card);
+        color: #FFFFFF;
+        border-bottom-left-radius: 4px;
+      }
+
+      .bubble.user {
+        background: var(--accent);
+        color: #0A0A0A;
+        font-weight: 700;
+        border-bottom-right-radius: 4px;
+      }
+
+      /* ── Fallback: nessuna categoria riconosciuta → invito a scrivere su WhatsApp ── */
+      .bubble.fallback {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      /* Widget WhatsApp: sempre verde, in ogni punto della chat in cui compare */
+      .wa-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        align-self: flex-start;
+        background: #25D366;
+        color: #FFFFFF;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 0.82rem;
+        padding: 0.55rem 1rem 0.55rem 0.7rem;
+        border-radius: 999px;
+        text-decoration: none;
+        box-shadow: 0 4px 16px rgba(37,211,102,0.35);
+        transition: background 0.15s ease, transform 0.15s ease;
+      }
+      .wa-cta:hover { background: #1EBE5A; transform: translateY(-1px); }
+      .wa-cta:active { transform: scale(0.97); }
+      .wa-cta svg { width: 18px; height: 18px; fill: #FFFFFF; flex-shrink: 0; }
+
+      /* ── Conferma "il video ti è stato utile?" con bottoni Sì/No ── */
+      .bubble.confirm {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .yn-row {
+        display: flex;
+        gap: 8px;
+      }
+
+      .yn-btn {
+        flex: 1;
+        padding: 0.55rem 0;
+        border-radius: 999px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 0.85rem;
+        transition: transform 0.15s ease, opacity 0.15s ease;
+      }
+
+      .yn-btn.yn-yes {
+        background: var(--accent);
+        color: #0A0A0A;
+      }
+
+      .yn-btn.yn-no {
+        background: transparent;
+        color: #FFFFFF;
+        border: 1px solid rgba(255,255,255,0.3);
+      }
+
+      .yn-btn:hover { transform: translateY(-1px); }
+      .yn-btn:active { transform: scale(0.96); }
+
+      .yn-btn:disabled { opacity: 0.4; cursor: default; transform: none; }
+      .yn-btn.yn-selected:disabled { opacity: 1; }
+
+      .bubble.video {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 0.5rem;
+        background: var(--bg-card);
+        border-bottom-left-radius: 4px;
+        max-width: 84%;
+        width: 100%;
+      }
+
+      .video-caption {
+        font-size: 0.82rem;
+        font-weight: 500;
+        color: #FFFFFF;
+        line-height: 1.4;
+        padding: 0.2rem 0.35rem 0;
+      }
+
+      .video-frame {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #000000;
+      }
+
+      .video-frame iframe {
         width: 100%;
         height: 100%;
         border: none;
         display: block;
       }
- 
-      /* ══ WHATSAPP ══ */
-      .wa-float {
-        position: fixed;
-        bottom: 1.4rem;
-        right: 1.2rem;
-        z-index: 9999;
+
+      /* ── Typing indicator ── */
+      .bubble.typing {
         display: flex;
         align-items: center;
-        justify-content: flex-end;
+        gap: 4px;
+        padding: 0.85rem 1rem;
       }
- 
-      .wa-pill {
-        display: flex;
-        align-items: center;
-        background: #1A1A1A;
-        border-radius: 50px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        text-decoration: none;
-        overflow: hidden;
-        opacity: 0;
-        transform: scale(0.7) translateY(10px);
-        animation: wa-appear 0.5s cubic-bezier(0.34,1.4,0.64,1) 5s forwards;
-      }
- 
-      @keyframes wa-appear {
-        to { opacity: 1; transform: scale(1) translateY(0); }
-      }
- 
-      .wa-text {
-        font-family: 'Outfit', sans-serif;
-        font-size: 0.72rem;
-        font-weight: 700;
-        letter-spacing: 0.04em;
-        color: #FFFFFF;
-        white-space: nowrap;
-        padding: 0 1.1rem 0 1.3rem;
-        max-width: 220px;
-        overflow: hidden;
-        opacity: 0;
-        animation:
-          text-in  0.4s ease 5.5s forwards,
-          text-out 0.4s ease 9s   forwards;
-      }
- 
-      @keyframes text-in  { to { opacity: 1; } }
-      @keyframes text-out { to { opacity: 0; max-width: 0; padding: 0; } }
- 
-      .wa-icon {
-        width: 58px;
-        height: 58px;
+      .bubble.typing span {
+        width: 6px;
+        height: 6px;
         border-radius: 50%;
-        background: #25D366;
+        background: rgba(255,255,255,0.55);
+        animation: typing-bounce 1.1s ease-in-out infinite;
+      }
+      .bubble.typing span:nth-child(2) { animation-delay: 0.15s; }
+      .bubble.typing span:nth-child(3) { animation-delay: 0.3s; }
+      @keyframes typing-bounce {
+        0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+        30%           { transform: translateY(-4px); opacity: 1; }
+      }
+
+      /* ── Input bar ── */
+      .chat-input-wrap {
+        position: relative;
+        flex: 0 0 auto;
+        padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
+        border-top: 1px solid transparent;
+        background: transparent;
+        transition: border-color 0.3s ease;
+        z-index: 30;
+      }
+
+      #app.started .chat-input-wrap { border-top-color: var(--border); }
+
+      .chat-form {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 4px 4px 4px 18px;
+      }
+
+      .chat-form input {
+        flex: 1;
+        border: none;
+        outline: none;
+        background: transparent;
+        font-family: 'Inter', sans-serif;
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--text);
+        padding: 10px 0;
+      }
+      .chat-form input::placeholder { color: var(--text-2); }
+
+      .send-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--accent);
         display: flex;
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
-        transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
-        animation: wa-pulse 3s ease-in-out 6s infinite;
+        transition: transform 0.15s ease, background 0.15s ease;
       }
- 
-      @keyframes wa-pulse {
-        0%, 100% { box-shadow: 0 0 0 0 rgba(37,211,102,0); }
-        50%       { box-shadow: 0 0 0 8px rgba(37,211,102,0.25); }
-      }
- 
-      .wa-pill:active .wa-icon { transform: scale(0.93); }
-      .wa-icon svg { width: 32px; height: 32px; fill: #FFFFFF; }
+      .send-btn:hover { background: var(--accent-h); }
+      .send-btn:active { transform: scale(0.92); }
+      .send-btn svg { width: 18px; height: 18px; fill: #0A0A0A; margin-left: 2px; }
+
     </style>
   </head>
   <body>
- 
-    <!-- ══ CAROUSEL ══ -->
-    <div id="carousel-view">
- 
-      <div class="carousel-track" id="track">
- 
-        <div class="slide" data-video="CuMIowDFg5w">
-          <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Shampoo.png" alt="Shampoo" loading="eager" draggable="false" />
-        </div>
- 
-        <div class="slide" data-video="1b4h6CX64eY">
-          <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Lozione.png" alt="Lozione" loading="eager" draggable="false" />
-        </div>
- 
-        <div class="slide" data-video="S7pz1fwtHiQ">
-          <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Conditioner.png" alt="Conditioner" loading="eager" draggable="false" />
-        </div>
- 
-        <div class="slide" data-video="Fs5UVQApcn4">
-          <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Emulsione%20LENITIVA.png" alt="Emulsione Lenitiva" loading="eager" draggable="false" />
-        </div>
- 
-        <div class="slide" data-video="O8fJ_afMtsg">
-          <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Emulsione%20AVVOLGENTE.png" alt="Emulsione Avvolgente" loading="eager" draggable="false" />
-        </div>
- 
-        <div class="slide" data-video="CpbqIZhjxu0">
-          <img src="https://raw.githubusercontent.com/DenirAdobati/istruzioni-beautri/main/Maschera.png" alt="Maschera" loading="eager" draggable="false" />
-        </div>
- 
+
+    <div id="app">
+     <div class="app-inner">
+
+      <!-- ══ 1. INTESTAZIONE — widget isola, identico a #main-navbar di beautri.it ══ -->
+      <div class="header-island-wrap">
+        <header class="header-island">
+          <span class="header-logo-icon" aria-hidden="true">
+            <img src="Logo.png" alt="" />
+          </span>
+          <span class="header-logo-text">Beautrì</span>
+        </header>
       </div>
- 
-      <!-- Dots -->
-      <div class="dots" id="dots">
-        <div class="dot active"></div>
-        <div class="dot"></div>
-        <div class="dot"></div>
-        <div class="dot"></div>
-        <div class="dot"></div>
-        <div class="dot"></div>
-      </div>
- 
-    </div>
- 
-    <!-- ══ WIDGET SWIPE — pill scuro in basso ══ -->
-    <div id="widget-swipe">
-      <div class="swipe-pill">
-        <span class="hand-icon">👉</span>
-        <span class="pill-text">Scorri a destra per i prodotti</span>
-        <span class="arrow-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9,6 15,12 9,18"/>
-          </svg>
-        </span>
-      </div>
-    </div>
- 
-    <!-- ══ WIDGET TAP — fumetto dall'alto ══ -->
-    <div id="widget-tap">
-      <div class="tap-bubble">
-        <span class="tap-finger">👆</span>
-        <span class="bubble-text">Tocca il prodotto per il tutorial</span>
-      </div>
-    </div>
- 
-    <!-- ══ VIDEO ══ -->
-    <div id="video-view">
-      <button class="back-btn" id="back-btn">
-        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="9,2 4,7 9,12"/>
-        </svg>
-        Prodotti
-      </button>
-      <div class="video-wrapper">
-        <iframe id="video-iframe" src="" title="Beautrì"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen>
-        </iframe>
-      </div>
-    </div>
- 
-    <!-- ══ WHATSAPP ══ -->
-    <div class="wa-float">
-      <a class="wa-pill" href="https://wa.me/393313348233" target="_blank" rel="noopener noreferrer" aria-label="Contattaci su WhatsApp">
-        <span class="wa-text">Hai bisogno di aiuto?&nbsp;👋</span>
-        <div class="wa-icon">
-          <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-            <path d="M16 1C7.716 1 1 7.716 1 16c0 2.67.693 5.178 1.906 7.353L1 31l7.865-1.878A14.94 14.94 0 0016 31c8.284 0 15-6.716 15-15S24.284 1 16 1zm0 27.5a12.44 12.44 0 01-6.32-1.716l-.454-.27-4.67 1.116 1.153-4.543-.298-.468A12.46 12.46 0 013.5 16C3.5 9.096 9.096 3.5 16 3.5S28.5 9.096 28.5 16 22.904 28.5 16 28.5zm6.844-9.18c-.375-.187-2.219-1.094-2.563-1.219-.343-.125-.593-.187-.843.188-.25.374-.968 1.218-1.187 1.468-.219.25-.438.282-.813.094-.375-.188-1.582-.583-3.013-1.857-1.113-.993-1.865-2.219-2.083-2.594-.219-.375-.023-.578.164-.765.169-.168.375-.438.563-.656.187-.219.25-.375.375-.625.125-.25.063-.469-.031-.657-.094-.187-.844-2.03-1.157-2.78-.304-.73-.614-.63-.843-.642-.219-.011-.469-.014-.719-.014-.25 0-.656.094-.999.469-.344.375-1.313 1.281-1.313 3.124 0 1.844 1.344 3.625 1.531 3.875.188.25 2.645 4.038 6.407 5.663.895.386 1.594.617 2.138.79.898.285 1.715.245 2.361.149.72-.108 2.219-.907 2.531-1.782.313-.875.313-1.625.22-1.781-.094-.156-.344-.25-.72-.438z"/>
-          </svg>
+
+      <!-- ══ 2-4. DOMANDA GUIDA + INPUT — raggruppati e centrati verticalmente;
+           dopo il primo messaggio la domanda guida sparisce e la barra di input
+           scivola in fondo, mentre .chat-messages riempie lo spazio sopra ══ -->
+      <div class="intro-group">
+        <div class="intro" id="intro">
+          <h1 class="intro-title">Ciao, sono Alessia!<br>Come posso aiutarti con i tuoi <span class="accent-word">prodotti</span>?</h1>
+          <p class="intro-sub">Scrivi di che cosa hai bisogno.</p>
         </div>
-      </a>
+
+        <div class="chat-input-wrap">
+          <form class="chat-form" id="chat-form" autocomplete="off">
+            <input type="text" id="chat-input" placeholder="Scrivi di che cosa hai bisogno…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+            <button type="submit" class="send-btn" aria-label="Invia">
+              <svg viewBox="0 0 24 24"><path d="M3 20l18-8L3 4v6l12 2-12 2z"/></svg>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ══ Conversazione — si riempie sotto la barra di input una volta avviata la chat ══ -->
+      <main class="chat-messages" id="chat-messages"></main>
+
+     </div>
     </div>
- 
+
     <script>
-      const track      = document.getElementById('track');
-      const dots       = document.querySelectorAll('.dot');
-      const slides     = document.querySelectorAll('.slide');
-      const widgetSwipe = document.getElementById('widget-swipe');
-      const widgetTap   = document.getElementById('widget-tap');
- 
-      let hasSwipedOnce = false;
-      let hasTappedOnce = false;
- 
-      /* ── Aggiorna dots sullo scroll ── */
-      track.addEventListener('scroll', () => {
-        const idx = Math.round(track.scrollLeft / window.innerWidth);
-        dots.forEach((d, i) => d.classList.toggle('active', i === idx));
- 
-        /* Al primo swipe reale → nascondi widget swipe */
-        if (!hasSwipedOnce && track.scrollLeft > 10) {
-          hasSwipedOnce = true;
-          widgetSwipe.style.opacity = '0';
-          setTimeout(() => widgetSwipe.style.display = 'none', 400);
-        }
-      }, { passive: true });
- 
-      /* ── Distinzione TAP vs SWIPE ── */
-      let touchStartX = 0;
-      let touchStartY = 0;
-      let isSwiping   = false;
- 
-      track.addEventListener('touchstart', (e) => {
-        touchStartX = e.touches[0].clientX;
-        touchStartY = e.touches[0].clientY;
-        isSwiping = false;
-      }, { passive: true });
- 
-      track.addEventListener('touchmove', (e) => {
-        const dx = Math.abs(e.touches[0].clientX - touchStartX);
-        const dy = Math.abs(e.touches[0].clientY - touchStartY);
-        if (dx > 8 || dy > 8) isSwiping = true;
-      }, { passive: true });
- 
-      track.addEventListener('touchend', (e) => {
-        if (isSwiping) return;
- 
-        const idx = Math.round(track.scrollLeft / window.innerWidth);
-        const slide = slides[idx];
-        if (!slide) return;
- 
-        slide.classList.add('tapped');
-        setTimeout(() => slide.classList.remove('tapped'), 150);
-        setTimeout(() => openVideo(slide.dataset.video), 120);
-      }, { passive: true });
- 
-      /* ── Supporto click desktop ── */
-      slides.forEach(slide => {
-        slide.addEventListener('click', () => openVideo(slide.dataset.video));
-      });
- 
-      /* ── Video ── */
-      function openVideo(ytid) {
-        if (!ytid) return;
- 
-        /* Al primo tap → nascondi widget tap */
-        if (!hasTappedOnce) {
-          hasTappedOnce = true;
-          widgetTap.style.transition = 'opacity 0.3s ease';
-          widgetTap.style.opacity = '0';
-          setTimeout(() => widgetTap.style.display = 'none', 300);
-        }
- 
-        const iframe = document.getElementById('video-iframe');
-        iframe.src = 'https://www.youtube.com/embed/' + ytid +
-          '?autoplay=1&rel=0&modestbranding=1&playsinline=1';
-        document.getElementById('video-view').classList.add('active');
+      /* ══ CATEGORIE PRODOTTO (video già esistenti, riutilizzati senza modifiche) ══ */
+      const CATEGORIES = [
+        { id: 'shampoo',              label: 'Shampoo',                  videoId: 'CuMIowDFg5w', keywords: ['shampoo', 'sh 1', 'sh1', 'sh 2', 'sh2', 'sh 3', 'sh3'] },
+        { id: 'maschera',             label: 'Maschera',                 videoId: 'CpbqIZhjxu0', keywords: ['maschera', 'maschere'] },
+        { id: 'lozione',              label: 'Lozione',                  videoId: '1b4h6CX64eY', keywords: ['lozione', 'lozioni', 'soft 1', 'soft1', 'soft 2', 'soft2', 'soft 3', 'soft3', 'active 1', 'active1', 'active 2', 'active2', 'active 3', 'active3'] },
+        { id: 'emulsione-lenitiva',   label: 'Emulsione Lenitiva',       videoId: 'Fs5UVQApcn4', keywords: ['emulsione lenitiva', 'lenitiva'] },
+        { id: 'emulsione-avvolgente', label: 'Emulsione Avvolgente',     videoId: 'O8fJ_afMtsg', keywords: ['emulsione avvolgente', 'avvolgente'] },
+        { id: 'conditioner',          label: 'Conditioner / Balsamo',    videoId: 'S7pz1fwtHiQ', keywords: ['conditioner', 'balsamo'] },
+      ];
+
+      const appEl         = document.getElementById('app');
+      const messagesEl    = document.getElementById('chat-messages');
+      const formEl        = document.getElementById('chat-form');
+      const inputEl       = document.getElementById('chat-input');
+
+      /* ── Passaggio dalla schermata iniziale alla conversazione ── */
+      let started = false;
+      function startChat() {
+        if (started) return;
+        started = true;
+        appEl.classList.add('started');
       }
- 
-      document.getElementById('back-btn').addEventListener('click', closeVideo);
-      document.getElementById('back-btn').addEventListener('touchend', function(e) {
+
+      /* ── Distanza di Levenshtein (numero minimo di modifiche per trasformare a in b) ── */
+      function levenshtein(a, b) {
+        const m = a.length, n = b.length;
+        const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+        for (let i = 0; i <= m; i++) dp[i][0] = i;
+        for (let j = 0; j <= n; j++) dp[0][j] = j;
+        for (let i = 1; i <= m; i++) {
+          for (let j = 1; j <= n; j++) {
+            dp[i][j] = a[i - 1] === b[j - 1]
+              ? dp[i - 1][j - 1]
+              : 1 + Math.min(dp[i - 1][j - 1], dp[i - 1][j], dp[i][j - 1]);
+          }
+        }
+        return dp[m][n];
+      }
+
+      /* Soglia di tolleranza errori: 1 carattere su parole brevi, 2 su parole più lunghe */
+      function fuzzyThreshold(len) {
+        return len <= 5 ? 1 : 2;
+      }
+
+      /* ── Matching per categoria: riconosce la keyword più specifica presente nella frase.
+         1) match esatto (substring) — priorità massima
+         2) se nessun match esatto, tentativo fuzzy parola-per-parola (tolleranza refusi) ── */
+      function matchCategory(raw) {
+        const t = raw.toLowerCase().trim();
+        if (!t) return null;
+
+        let best = null;
+        for (const cat of CATEGORIES) {
+          for (const kw of cat.keywords) {
+            if (t.includes(kw) && (!best || kw.length > best.kwLen)) {
+              best = { cat, kwLen: kw.length };
+            }
+          }
+        }
+        if (best) return best.cat;
+
+        const words = t.split(/[^a-zà-ù]+/i).filter(w => w.length >= 3);
+        let fuzzyBest = null;
+        for (const cat of CATEGORIES) {
+          for (const kw of cat.keywords) {
+            for (const kwWord of kw.split(' ')) {
+              if (kwWord.length < 3) continue;
+              const threshold = fuzzyThreshold(kwWord.length);
+              for (const w of words) {
+                const dist = levenshtein(w, kwWord);
+                if (dist <= threshold && (!fuzzyBest || dist < fuzzyBest.dist)) {
+                  fuzzyBest = { cat, dist };
+                }
+              }
+            }
+          }
+        }
+        return fuzzyBest ? fuzzyBest.cat : null;
+      }
+
+      /* ── Bolle di chat ── */
+      function scrollToBottom() {
+        requestAnimationFrame(() => {
+          messagesEl.scrollTop = messagesEl.scrollHeight;
+        });
+      }
+
+      function appendUserBubble(text) {
+        const msg = document.createElement('div');
+        msg.className = 'msg user';
+        msg.innerHTML = '<div class="bubble user"></div>';
+        msg.querySelector('.bubble').textContent = text;
+        messagesEl.appendChild(msg);
+        scrollToBottom();
+      }
+
+      function appendBotText(text) {
+        const msg = document.createElement('div');
+        msg.className = 'msg bot';
+        msg.innerHTML = '<div class="mini-avatar"><img src="Logo.png" alt="" /></div><div class="bubble bot"></div>';
+        msg.querySelector('.bubble').textContent = text;
+        messagesEl.appendChild(msg);
+        scrollToBottom();
+      }
+
+      function appendVideoBubble(cat) {
+        const msg = document.createElement('div');
+        msg.className = 'msg bot';
+        msg.innerHTML =
+          '<div class="mini-avatar"><img src="Logo.png" alt="" /></div>' +
+          '<div class="bubble video">' +
+            '<span class="video-caption">Ti invito a guardare questo video dove Daniela spiega come utilizzare correttamente il prodotto che hai menzionato.</span>' +
+            '<div class="video-frame">' +
+              '<iframe src="https://www.youtube-nocookie.com/embed/' + cat.videoId + '?rel=0&modestbranding=1&playsinline=1" ' +
+              'title="' + cat.label + '" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>' +
+            '</div>' +
+          '</div>';
+        messagesEl.appendChild(msg);
+        scrollToBottom();
+      }
+
+      const WA_ICON_SVG = '<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 1C7.716 1 1 7.716 1 16c0 2.67.693 5.178 1.906 7.353L1 31l7.865-1.878A14.94 14.94 0 0016 31c8.284 0 15-6.716 15-15S24.284 1 16 1zm0 27.5a12.44 12.44 0 01-6.32-1.716l-.454-.27-4.67 1.116 1.153-4.543-.298-.468A12.46 12.46 0 013.5 16C3.5 9.096 9.096 3.5 16 3.5S28.5 9.096 28.5 16 22.904 28.5 16 28.5zm6.844-9.18c-.375-.187-2.219-1.094-2.563-1.219-.343-.125-.593-.187-.843.188-.25.374-.968 1.218-1.187 1.468-.219.25-.438.282-.813.094-.375-.188-1.582-.583-3.013-1.857-1.113-.993-1.865-2.219-2.083-2.594-.219-.375-.023-.578.164-.765.169-.168.375-.438.563-.656.187-.219.25-.375.375-.625.125-.25.063-.469-.031-.657-.094-.187-.844-2.03-1.157-2.78-.304-.73-.614-.63-.843-.642-.219-.011-.469-.014-.719-.014-.25 0-.656.094-.999.469-.344.375-1.313 1.281-1.313 3.124 0 1.844 1.344 3.625 1.531 3.875.188.25 2.645 4.038 6.407 5.663.895.386 1.594.617 2.138.79.898.285 1.715.245 2.361.149.72-.108 2.219-.907 2.531-1.782.313-.875.313-1.625.22-1.781-.094-.156-.344-.25-.72-.438z"/></svg>';
+
+      function appendFallbackBubble() {
+        const msg = document.createElement('div');
+        msg.className = 'msg bot';
+        msg.innerHTML =
+          '<div class="mini-avatar"><img src="Logo.png" alt="" /></div>' +
+          '<div class="bubble bot fallback">' +
+            '<span>Non ho trovato una risposta per questo. Ti invito a scrivermi su WhatsApp, ti aiuterò subito!</span>' +
+            '<a class="wa-cta" href="https://wa.me/393313348233" target="_blank" rel="noopener noreferrer" aria-label="Scrivimi su WhatsApp">' +
+              WA_ICON_SVG +
+              '<span>Scrivi su WhatsApp</span>' +
+            '</a>' +
+          '</div>';
+        messagesEl.appendChild(msg);
+        scrollToBottom();
+      }
+
+      /* ── Dopo il video: chiede conferma di utilità con bottoni Sì/No ── */
+      function appendConfirmBubble() {
+        const msg = document.createElement('div');
+        msg.className = 'msg bot';
+        msg.innerHTML =
+          '<div class="mini-avatar"><img src="Logo.png" alt="" /></div>' +
+          '<div class="bubble bot confirm">' +
+            '<span>Il video ti è stato utile per risolvere il tuo dubbio?</span>' +
+            '<div class="yn-row">' +
+              '<button type="button" class="yn-btn yn-yes">Sì</button>' +
+              '<button type="button" class="yn-btn yn-no">No</button>' +
+            '</div>' +
+          '</div>';
+        messagesEl.appendChild(msg);
+
+        const row = msg.querySelector('.yn-row');
+        row.querySelector('.yn-yes').addEventListener('click', () => handleFeedback(true, row));
+        row.querySelector('.yn-no').addEventListener('click', () => handleFeedback(false, row));
+
+        scrollToBottom();
+      }
+
+      function handleFeedback(isYes, row) {
+        row.querySelectorAll('.yn-btn').forEach(b => { b.disabled = true; });
+        row.querySelector(isYes ? '.yn-yes' : '.yn-no').classList.add('yn-selected');
+
+        appendUserBubble(isYes ? 'Sì' : 'No');
+
+        showTyping();
+        setTimeout(() => {
+          removeTyping();
+          if (isYes) {
+            appendBotText('Sono felice di averti aiutata! Per qualsiasi altra cosa, sono qui.');
+          } else {
+            appendNoHelpBubble();
+          }
+        }, 450);
+      }
+
+      /* ── Risposta "No": invito a scrivere direttamente a Daniela su WhatsApp ── */
+      function appendNoHelpBubble() {
+        const msg = document.createElement('div');
+        msg.className = 'msg bot';
+        msg.innerHTML =
+          '<div class="mini-avatar"><img src="Logo.png" alt="" /></div>' +
+          '<div class="bubble bot fallback">' +
+            '<span>Mi dispiace, ti invito a contattarci direttamente su WhatsApp: ti risponderà Daniela che ti aiuterà subito.</span>' +
+            '<a class="wa-cta" href="https://wa.me/393313348233" target="_blank" rel="noopener noreferrer" aria-label="Scrivi a Daniela su WhatsApp">' +
+              WA_ICON_SVG +
+              '<span>Scrivi su WhatsApp</span>' +
+            '</a>' +
+          '</div>';
+        messagesEl.appendChild(msg);
+        scrollToBottom();
+      }
+
+      let typingEl = null;
+      function showTyping() {
+        typingEl = document.createElement('div');
+        typingEl.className = 'msg bot';
+        typingEl.innerHTML =
+          '<div class="mini-avatar"><img src="Logo.png" alt="" /></div>' +
+          '<div class="bubble bot typing"><span></span><span></span><span></span></div>';
+        messagesEl.appendChild(typingEl);
+        scrollToBottom();
+      }
+      function removeTyping() {
+        if (typingEl) { typingEl.remove(); typingEl = null; }
+      }
+
+      /* ── Invio messaggio (testo digitato o suggerimento) ── */
+      /* Conta i tentativi consecutivi non riconosciuti: 1° → chiarimento, 2° → fallback WhatsApp */
+      let consecutiveMisses = 0;
+
+      function submitMessage(rawText) {
+        const text = rawText.trim();
+        if (!text) return;
+
+        startChat();
+        appendUserBubble(text);
+        const cat = matchCategory(text);
+
+        showTyping();
+        setTimeout(() => {
+          removeTyping();
+
+          if (cat) {
+            consecutiveMisses = 0;
+            appendVideoBubble(cat);
+            /* Attesa ~10s (tempo per guardare il video) prima della domanda automatica */
+            setTimeout(() => {
+              showTyping();
+              setTimeout(() => {
+                removeTyping();
+                appendConfirmBubble();
+              }, 600);
+            }, 10000);
+          } else {
+            consecutiveMisses++;
+            if (consecutiveMisses === 1) {
+              appendBotText('Posso sapere di che tipologia di prodotto stai parlando?');
+            } else {
+              appendFallbackBubble();
+              consecutiveMisses = 0;
+            }
+          }
+        }, 450);
+      }
+
+      formEl.addEventListener('submit', (e) => {
         e.preventDefault();
-        closeVideo();
+        const text = inputEl.value.trim();
+        if (!text) return;
+        inputEl.value = '';
+        submitMessage(text);
       });
- 
-      function closeVideo() {
-        document.getElementById('video-iframe').src = '';
-        document.getElementById('video-view').classList.remove('active');
-      }
     </script>
- 
+
   </body>
 </html>
- 
